@@ -1,20 +1,23 @@
+
 setuptools==65.5.1
 wheel==0.38.4
 streamlit==1.28.0
 numpy==1.23.5
+
 openai==0.28.1
---extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.0.1
 torchaudio==2.0.1
 openai-whisper==20231117
 pydub==0.25.1
+
+
 langchain==0.0.271
 langchain-openai==0.0.2
 faiss-cpu==1.7.4
+
+
 python-dotenv==1.0.0
 requests==2.31.0
-setuptools-rust==1.5.2
-
 
 
 
