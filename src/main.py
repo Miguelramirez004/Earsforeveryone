@@ -12,7 +12,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from pydub import AudioSegment
 import tempfile
-import disutils
+
 
 def clean_llm_response(response):
     """Clean LLM response by removing metadata and response formatting"""
