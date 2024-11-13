@@ -1,20 +1,14 @@
-# Basic setup
 setuptools
 wheel
-
-# Main dependencies
 streamlit==1.24.0
-numpy==1.21.0
+numpy==1.24.3
 openai==0.28.1
-whisper==1.1.10
 pydub==0.25.1
-
-# LangChain
+whisper==1.1.10
 langchain==0.0.271
 langchain-openai==0.0.2
 faiss-cpu==1.7.4
-
-# Utils
+python-dotenv==1.0.0
 requests==2.31.0
 
 
