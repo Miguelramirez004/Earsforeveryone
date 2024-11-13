@@ -1,4 +1,9 @@
-ffmpeg
+python3-distutils
 python3-dev
-build-essential
+libjpeg-dev
+zlib1g-dev
+libfreetype6-dev
+liblcms2-dev
+libwebp-dev
+ffmpeg
 
