@@ -1,17 +1,11 @@
-
 streamlit==1.24.0
 numpy==1.23.5
 openai==0.28.1
-
-
 pydub==0.25.1
 openai-whisper==20231117
-
 langchain==0.0.271
 langchain-openai==0.0.2
 faiss-cpu==1.7.4
-
-
 python-dotenv==1.0.0
 requests==2.31.0
 
