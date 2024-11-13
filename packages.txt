@@ -1,5 +1,7 @@
-python3.9
-python3.9-distutils
-python3.9-dev
-ffmpeg
+python3-pip
+python3-dev
+build-essential
+libpoppler-cpp-dev
+pkg-config
+python3-opencv
 
