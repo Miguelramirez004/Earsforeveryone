@@ -13,7 +13,6 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from pydub import AudioSegment
 import tempfile
 
-
 def clean_llm_response(response):
     """Clean LLM response by removing metadata and response formatting"""
     if not response:
@@ -115,14 +114,23 @@ class EnhancedAudioRAG:
         )
         self.vector_store = None
 
-    def process_mp3_file(self, mp3_file):
-        """Process an uploaded MP3 file"""
+    def process_mp3_file(self, file_path):
+        """Process an uploaded audio/video file"""
         try:
-            # Convert MP3 to WAV format
+            # Check if it's an MP4 file
+            is_video = file_path.name.lower().endswith('.mp4')
+            
+            # Convert MP4 to WAV for transcription if it's a video file
             with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_wav:
-                audio = AudioSegment.from_mp3(mp3_file)
+                if is_video:
+                    # Extract audio from video
+                    audio = AudioSegment.from_file(file_path, format="mp4")
+                else:
+                    # Handle MP3 as before
+                    audio = AudioSegment.from_mp3(file_path)
+                    
                 audio.export(temp_wav.name, format='wav')
-                
+                    
                 # Transcribe audio file
                 result = self.whisper_model.transcribe(temp_wav.name)
                 
@@ -135,8 +143,8 @@ class EnhancedAudioRAG:
                     # Extract key terms with confidence scores
                     key_terms = self._extract_key_terms(text)
                     
-                    # Generate visual aid with confidence score
-                    visual_aid = self._generate_visual_aid(text)
+                    # Generate visual aid with video player if it's a video file
+                    visual_aid = self._generate_visual_aid(text, file_path if is_video else None)
                     
                     segment_data = {
                         "timestamp": timestamp,
@@ -156,7 +164,7 @@ class EnhancedAudioRAG:
                 return True
                 
         except Exception as e:
-            raise Exception(f"Error processing MP3 file: {str(e)}")
+            raise Exception(f"Error processing file: {str(e)}")
     
 
     def ask_question(self, question):
@@ -238,65 +246,32 @@ class EnhancedAudioRAG:
             print(f"Error extracting key terms: {e}")
             return []
 
-    def _generate_visual_aid(self, text):
-        """Generate a visual description for complex concepts with confidence score"""
-        if not text.strip() or len(text.split()) < 10:
+    def _generate_visual_aid(self, text, video_file=None):
+        """Display video player for the corresponding segment"""
+        if not video_file:
             return None
-            
+        
         try:
-            visual_prompt = f"""Create a brief, clear visual description of the main concepts from this text.
-            Focus on:
-            - Key relationships between concepts
-            - Sequential steps or processes
-            - Visual analogies
+            # Calculate timestamp in seconds from the text segment
+            # Assuming segment timestamps are in format HH:MM:SS
+            timestamp = None
+            for segment in self.transcribed_segments:
+                if text in segment["text"]:
+                    time_parts = segment["timestamp"].split(":")
+                    timestamp = int(time_parts[0]) * 3600 + int(time_parts[1]) * 60 + int(time_parts[2])
+                    break
             
-            Provide a confidence score (0-100) at the end as [confidence: X].
-            
-            Text: {text}"""
-            
-            raw_response = self.llm.invoke(visual_prompt)
-            visual_text = str(raw_response)
-            
-            # Remove content= prefix if present
-            if 'content=' in visual_text:
-                visual_text = visual_text.split('content=')[1]
-            
-            # Remove metadata
-            if 'additional_kwargs=' in visual_text:
-                visual_text = visual_text.split('additional_kwargs=')[0]
-            
-            # Extract confidence score
-            confidence = 0
-            if '[confidence:' in visual_text:
-                try:
-                    confidence_str = visual_text.split('[confidence:')[1].split(']')[0].strip()
-                    confidence = float(confidence_str)
-                    visual_text = visual_text.split('[confidence:')[0].strip()
-                except:
-                    confidence = 0
-            
-            # Clean up formatting
-            visual_text = visual_text.replace("'", "").replace('"', "")
-            visual_text = visual_text.replace("\\n", "\n")
-            visual_text = visual_text.replace("\\- ", "• ").replace("-", "•")
-            visual_text = visual_text.strip()
-            
-            # Remove any remaining metadata patterns
-            visual_text = visual_text.split('response_metadata=')[0].strip()
-            visual_text = visual_text.split('usage_metadata=')[0].strip()
-            visual_text = visual_text.split('token_usage')[0].strip()
-            
-            # Fix bullet points and line breaks
-            lines = [line.strip() for line in visual_text.split('\n')]
-            visual_text = '\n'.join(line for line in lines if line)
-            
+            if timestamp is None:
+                return None
+                
             return {
-                "description": visual_text,
-                "confidence": confidence
+                "video_file": video_file,
+                "start_time": timestamp,
+                "confidence": segment.get('confidence', 0) if segment else 0
             }
-            
+                
         except Exception as e:
-            print(f"Error generating visual aid: {e}")
+            print(f"Error setting up video player: {e}")
             return None
 
     def _update_key_terms(self, new_terms):
@@ -420,10 +395,18 @@ class EnhancedAudioRAG:
     def generate_term_definition(self, term):
         """Generate definition for a term with confidence score"""
         try:
-            definition_prompt = f"""Define this term clearly and concisely:
-            Term: {term}
+            full_text = " ".join([seg["text"] for seg in self.transcribed_segments])
+            if not full_text.strip():
+                return None
+                
+            definition_prompt = f"""Define this specific term from the content below:
+            Term to define: {term}
+
+            Provide a clear, concise definition for how this specific term is used in the given context.
+            Focus only on information directly related to this term.
+            Include a confidence score (0-100) at the end of your response in [confidence: X].
             
-            Provide your confidence score (0-100) at the end as [confidence: X]."""
+            Content: {full_text}"""
             
             raw_response = self.llm.invoke(definition_prompt)
             definition_text = str(raw_response)
@@ -459,7 +442,7 @@ class EnhancedAudioRAG:
         except Exception as e:
             print(f"Error generating definition: {e}")
             return None
-
+        
     def export_content(self, content_type="transcript"):
         """Export content in various formats"""
         if not self.transcribed_segments:
@@ -660,10 +643,32 @@ def render_transcript_segment(segment, accessibility_settings):
         </div>
     """, unsafe_allow_html=True)
 
+
 def render_visual_aid(visual_aid_data, accessibility_settings):
-    """Render visual aid with confidence score"""
+    """Render video player or visual aid with confidence score"""
     if not visual_aid_data:
         return
+    
+    if "video_file" in visual_aid_data:
+        # Display video player
+        st.video(visual_aid_data["video_file"], start_time=visual_aid_data["start_time"])
+        
+        # Show confidence score
+        confidence = visual_aid_data['confidence']
+        confidence_class = (
+            'confidence-low' if confidence < 50 else
+            'confidence-medium' if confidence < 75 else
+            'confidence-high'
+        )
+        
+        st.markdown(f"""
+            <div class="{confidence_class}">
+                Confidence: {confidence}%
+            </div>
+        """, unsafe_allow_html=True)
+    else:
+        # Fallback to original visual aid display if no video
+        st.info("No video content available for this segment.")
     
     font_size_class = {
         'Small': 'font-size-small',
@@ -773,7 +778,7 @@ def create_streamlit_ui():
         
         # MP3 File Upload
         st.markdown('### Upload Audio')
-        uploaded_file = st.file_uploader("Choose an MP3 file", type=['mp3'])
+        uploaded_file = st.file_uploader("Choose an audio/video file", type=['mp3', 'mp4'])
         
         if uploaded_file:
             if st.session_state.rag_system:
@@ -838,7 +843,10 @@ def create_streamlit_ui():
         if not st.session_state.file_content_processed:
             st.info("Upload an MP3 file to see transcription")
             return
-            
+        if uploaded_file and uploaded_file.name.lower().endswith('.mp4'):
+            st.markdown("#### visual aid")
+            st.video(uploaded_file) 
+         
         cols = st.columns([2, 1])
         with cols[0]:
             for segment in st.session_state.rag_system.transcribed_segments:
