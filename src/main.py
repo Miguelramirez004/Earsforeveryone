@@ -481,6 +481,95 @@ class EnhancedAudioRAG:
         
         return None
 
+    # Add these methods inside your EnhancedAudioRAG class
+    def generate_transcript_timeline(self):
+        """Generate an interactive timeline of the transcript"""
+        if not self.transcribed_segments:
+            return None
+            
+        try:
+            # Create timeline data structure
+            timeline_data = []
+            for segment in self.transcribed_segments:
+                # Convert timestamp to seconds for sorting
+                time_parts = segment["timestamp"].split(":")
+                seconds = int(time_parts[0]) * 3600 + int(time_parts[1]) * 60 + int(time_parts[2])
+                
+                # Extract key terms if they exist
+                key_terms = ", ".join([term["term"] for term in segment.get("key_terms", [])])
+                
+                timeline_data.append({
+                    "timestamp": segment["timestamp"],
+                    "seconds": seconds,
+                    "text": segment["text"],
+                    "key_terms": key_terms,
+                    "confidence": segment.get("confidence", 0)
+                })
+
+            def render_timeline():
+                """Render the timeline visualization"""
+                st.markdown("### Transcript Timeline")
+                
+                # Create timeline settings
+                col1, col2 = st.columns([3, 1])
+                with col2:
+                    timeline_view = st.radio(
+                        "View Mode",
+                        ["Compact", "Detailed"],
+                        key="timeline_view"
+                    )
+                    show_confidence = st.checkbox("Show Confidence Scores", value=True)
+                    show_terms = st.checkbox("Show Key Terms", value=True)
+
+                # Display timeline
+                for i, entry in enumerate(timeline_data):
+                    # Create a card for each timeline entry
+                    with st.container():
+                        cols = st.columns([1, 4])
+                        
+                        # Timestamp column
+                        with cols[0]:
+                            st.markdown(f"**{entry['timestamp']}**")
+                            if show_confidence:
+                                confidence = entry["confidence"]
+                                st.markdown(
+                                    f"<span style='color: {'red' if confidence < 50 else 'orange' if confidence < 75 else 'green'}'>"
+                                    f"Confidence: {confidence:.1f}%</span>",
+                                    unsafe_allow_html=True
+                                )
+                        
+                        # Content column
+                        with cols[1]:
+                            if timeline_view == "Detailed":
+                                st.markdown(entry["text"])
+                                if show_terms and entry["key_terms"]:
+                                    st.markdown(f"*Key Terms: {entry['key_terms']}*")
+                            else:
+                                # Show truncated text for compact view
+                                truncated_text = entry["text"][:100] + "..." if len(entry["text"]) > 100 else entry["text"]
+                                st.markdown(truncated_text)
+                        
+                        # Add visual separator between entries
+                        if i < len(timeline_data) - 1:
+                            st.markdown("<hr style='margin: 5px 0; opacity: 0.3'>", unsafe_allow_html=True)
+
+            return render_timeline
+            
+        except Exception as e:
+            print(f"Error generating timeline: {e}")
+            return None
+
+    def process_transcript_timeline(self):
+        """Process transcript and create timeline"""
+        try:
+            timeline_func = self.generate_transcript_timeline()
+            if timeline_func:
+                return timeline_func
+            return None
+        except Exception as e:
+            print(f"Error processing transcript timeline: {e}")
+            return None
+
 def set_custom_style():
     """Set custom CSS styling for the application"""
     st.markdown("""
@@ -896,6 +985,7 @@ def create_streamlit_ui():
                 render_qa_response(qa, st.session_state.accessibility_settings)
     
     # Study Materials tab
+    # Study Materials tab
     with tabs[2]:
         st.markdown("### Study Materials & Resources")
         if not st.session_state.rag_system:
@@ -903,13 +993,24 @@ def create_streamlit_ui():
             return
 
         if not st.session_state.file_content_processed:
-            st.info("Upload an MP3 file to generate study materials")
+            st.info("Upload an audio/video file to generate study materials")
             return
             
-        cols = st.columns(2)
+        # Create subtabs
+        timeline_tab, summary_tab, glossary_tab = st.tabs([
+            "📅 Timeline", 
+            "📝 Summary", 
+            "📚 Glossary"
+        ])
         
-        # Summary column
-        with cols[0]:
+        # Timeline tab
+        with timeline_tab:
+            timeline_func = st.session_state.rag_system.process_transcript_timeline()
+            if timeline_func:
+                timeline_func()
+        
+        # Summary tab
+        with summary_tab:
             st.markdown("#### Content Summary")
             if not st.session_state.summary_generated:
                 if st.button("Generate Summary", type="primary"):
@@ -944,12 +1045,12 @@ def create_streamlit_ui():
                     </div>
                 """, unsafe_allow_html=True)
         
-        # Key Terms column
-        with cols[1]:
+        # Glossary tab
+        with glossary_tab:
             st.markdown("#### Key Terms Glossary")
             if st.session_state.rag_system.key_terms:
                 undefined_terms = [term for term in st.session_state.rag_system.key_terms 
-                                 if term not in st.session_state.term_definitions]
+                                if term not in st.session_state.term_definitions]
                 
                 if undefined_terms and st.button("Generate Definitions"):
                     with st.spinner("Generating definitions..."):
@@ -1015,8 +1116,6 @@ def create_streamlit_ui():
                         "text/plain",
                         key="download_study_guide"
                     )
-    
-    # Accessibility Tools tab
     with tabs[3]:
         st.markdown("### Accessibility Tools & Settings")
         
