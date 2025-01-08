@@ -1,4 +1,4 @@
-echo '[theme]
+[theme]
 primaryColor = "#000000"
 backgroundColor = "#0E1117"
 secondaryBackgroundColor = "#1E1E1E"
@@ -11,4 +11,4 @@ enableCORS = false
 enableWebsocketCompression = false
 
 [browser]
-gatherUsageStats = false' > .streamlit/config.toml
+gatherUsageStats = false
