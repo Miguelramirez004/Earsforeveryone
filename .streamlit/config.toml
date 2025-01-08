@@ -12,9 +12,4 @@ primaryColor = "#000000"
 backgroundColor = "#FFFFFF"
 secondaryBackgroundColor = "#F0F2F6"
 textColor = "#000000"
-secondaryTextColor = "#646464"
-font = "SF Pro Display"
-
-[theme.base]
-font = "SF Pro Display"
-textColor = "#000000"
+font = "sans serif"
