@@ -1,3 +1,10 @@
+/* Title styling */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 600;
+    color: rgb(250, 250, 250);
+}
+
 /* Dark theme styling */
 .stApp {
     background-color: #0E1117;
@@ -9,7 +16,34 @@
     padding: 2rem 1rem;
 }
 
-/* Tab styling */
+/* Column styling */
+[data-testid="column"]:first-child {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding-right: 1rem;
+}
+
+[data-testid="column"]:last-child {
+    padding-left: 1rem;
+}
+
+/* Ensure columns take full height */
+[data-testid="column"] {
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+}
+
+/* Remove default padding */
+.block-container {
+    padding: 2rem 1rem !important;
+    max-width: none !important;
+}
+
+/* Remove red underline from selected tabs */
+.stTabs [data-baseweb="tab-highlight"] {
+    display: none;
+}
+
+/* Tab styling - only for second column */
 [data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
     gap: 0.5rem;
     background-color: rgba(30, 30, 30, 0.8);
@@ -26,10 +60,34 @@
     font-weight: 500;
 }
 
+[data-testid="column"]:last-child .stTabs [data-baseweb="tab"]:hover {
+    color: rgb(250, 250, 250);
+}
+
 [data-testid="column"]:last-child .stTabs [aria-selected="true"] {
     color: rgb(250, 250, 250) !important;
     background-color: rgba(50, 50, 50, 0.8) !important;
     border: none !important;
+}
+
+/* Hide default tab border in second column */
+[data-testid="column"]:last-child .stTabs [data-baseweb="tab-border"] {
+    display: none;
+}
+
+/* Keep original styling for first column tabs */
+[data-testid="column"]:first-child .stTabs [data-baseweb="tab-list"] {
+    gap: 1rem;
+}
+
+[data-testid="column"]:first-child .stTabs [data-baseweb="tab"] {
+    padding: 0 1rem;
+    color: rgb(148, 148, 148);
+}
+
+[data-testid="column"]:first-child .stTabs [aria-selected="true"] {
+    color: rgb(250, 250, 250) !important;
+    border-bottom: 2px solid rgb(250, 250, 250) !important;
 }
 
 /* Input styling */
@@ -44,4 +102,12 @@
     background-color: #262730;
     padding: 1rem;
     border-radius: 0.5rem;
+}
+
+/* Upload box styling */
+.uploadedFile {
+    background-color: #262730;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 0.5rem 0;
 }
