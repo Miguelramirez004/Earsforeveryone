@@ -43,7 +43,7 @@ h1, h2, h3, h4, h5, h6 {
     display: none;
 }
 
-/* Tab styling - only for second column */
+/* Tab styling - ONLY for second column */
 [data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
     gap: 0.5rem;
     background-color: rgba(30, 30, 30, 0.8);
@@ -75,7 +75,7 @@ h1, h2, h3, h4, h5, h6 {
     display: none;
 }
 
-/* Keep original styling for first column tabs */
+/* Keep simple styling for first column tabs */
 [data-testid="column"]:first-child .stTabs [data-baseweb="tab-list"] {
     gap: 1rem;
 }
