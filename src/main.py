@@ -576,84 +576,15 @@ class EnhancedAudioRAG:
 def set_custom_style():
     st.markdown("""
         <style>
-        /* Title styling */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-weight: 600;
-            color: rgb(250, 250, 250);
-        }
-
-        /* Column styling */
-        [data-testid="column"]:first-child {
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding-right: 1rem;
-        }
-
-        [data-testid="column"]:last-child {
-            padding-left: 1rem;
-        }
-
-        /* Ensure columns take full height */
-        [data-testid="column"] {
-            height: calc(100vh - 80px);
-            overflow-y: auto;
-        }
-
-        /* Remove default padding */
-        .block-container {
-            padding: 2rem 1rem !important;
-            max-width: none !important;
-        }
-
-        /* Consistent heading sizes */
-        h1 {
-            font-size: 1.8rem !important;
-        }
-
-        h3 {
-            font-size: 1.2rem !important;
-            margin-bottom: 1rem !important;
-        }
-
-        /* Ensure sidebar titles match */
-        .sidebar .block-container {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        /* Transcript styling */
-        .transcript-segment {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 0.6rem;
-            gap: 0.8rem;
-        }
-
-        .timestamp {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.5);
-            min-width: 45px;
-            padding-top: 0.2rem;
-        }
-
-        .text {
-            flex: 1;
-            line-height: 1.4;
-        }
-
-        /* Remove red underline from selected tabs */
-        .stTabs [data-baseweb="tab-highlight"] {
-            display: none;
-        }
-
-        /* Tab styling - only for second column */
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
+        /* Fallback styles in case .streamlit/styles.css doesn't load */
+        .stTabs [data-baseweb="tab-list"] {
             gap: 0.5rem;
             background-color: rgba(30, 30, 30, 0.8);
             padding: 0.5rem;
             border-radius: 2rem;
         }
 
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"] {
+        .stTabs [data-baseweb="tab"] {
             height: 2.5rem;
             padding: 0 1.5rem;
             color: rgb(148, 148, 148);
@@ -662,53 +593,10 @@ def set_custom_style():
             font-weight: 500;
         }
 
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"]:hover {
-            color: rgb(250, 250, 250);
-        }
-
-        [data-testid="column"]:last-child .stTabs [aria-selected="true"] {
+        .stTabs [aria-selected="true"] {
             color: rgb(250, 250, 250) !important;
             background-color: rgba(50, 50, 50, 0.8) !important;
             border: none !important;
-        }
-
-        /* Hide default tab border in second column */
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab-border"] {
-            display: none;
-        }
-
-        /* Keep original styling for first column tabs */
-        [data-testid="column"]:first-child .stTabs [data-baseweb="tab-list"] {
-            gap: 1rem;
-        }
-
-        [data-testid="column"]:first-child .stTabs [data-baseweb="tab"] {
-            padding: 0 1rem;
-            color: rgb(148, 148, 148);
-        }
-
-        [data-testid="column"]:first-child .stTabs [aria-selected="true"] {
-            color: rgb(250, 250, 250) !important;
-            border-bottom: 2px solid rgb(250, 250, 250) !important;
-        }
-
-        /* Chat input styling */
-        .stChatInput button {
-            background-color: transparent !important;
-            border: none !important;
-        }
-
-        .stChatInput button:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-        }
-
-        .stChatInput button svg {
-            transform: scale(0.8);
-            fill: rgba(255, 255, 255, 0.5) !important;
-        }
-
-        .stChatInput button:hover svg {
-            fill: rgba(255, 255, 255, 0.8) !important;
         }
         </style>
     """, unsafe_allow_html=True)
