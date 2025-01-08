@@ -1,0 +1,47 @@
+/* Dark theme styling */
+.stApp {
+    background-color: #0E1117;
+}
+
+/* Sidebar styling */
+[data-testid="stSidebar"] {
+    background-color: #1E1E1E;
+    padding: 2rem 1rem;
+}
+
+/* Tab styling */
+[data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
+    gap: 0.5rem;
+    background-color: rgba(30, 30, 30, 0.8);
+    padding: 0.5rem;
+    border-radius: 2rem;
+}
+
+[data-testid="column"]:last-child .stTabs [data-baseweb="tab"] {
+    height: 2.5rem;
+    padding: 0 1.5rem;
+    color: rgb(148, 148, 148);
+    background-color: transparent;
+    border-radius: 1.25rem;
+    font-weight: 500;
+}
+
+[data-testid="column"]:last-child .stTabs [aria-selected="true"] {
+    color: rgb(250, 250, 250) !important;
+    background-color: rgba(50, 50, 50, 0.8) !important;
+    border: none !important;
+}
+
+/* Input styling */
+.stTextInput input {
+    background-color: #262730;
+    color: white;
+    border: 1px solid #4A4A4A;
+}
+
+/* File uploader styling */
+[data-testid="stFileUploader"] {
+    background-color: #262730;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
