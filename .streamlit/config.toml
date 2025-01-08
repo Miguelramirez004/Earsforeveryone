@@ -10,5 +10,7 @@ headless = true
 enableCORS = false
 enableWebsocketCompression = false
 
+
+
 [browser]
 gatherUsageStats = false
