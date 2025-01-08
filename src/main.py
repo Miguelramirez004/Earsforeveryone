@@ -645,7 +645,7 @@ def set_custom_style():
             display: none;
         }
 
-        /* Tab styling - only for second column */
+        /* Custom tab styling - only for second column */
         [data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
             gap: 0.5rem;
             background-color: rgba(30, 30, 30, 0.8);
