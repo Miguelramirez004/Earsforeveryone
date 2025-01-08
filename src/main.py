@@ -79,6 +79,10 @@ def init_session_state():
             'file_content_processed': False,
             'current_file_name': None,
             'definitions_generated': False,
+            'summary_with_confidence': None,
+            'messages': [],
+            'definitions_generated': False,
+            'term_definitions': {},
             'summary_with_confidence': None
         }
         
@@ -571,582 +575,392 @@ class EnhancedAudioRAG:
             return None
 
 def set_custom_style():
-    """Set custom CSS styling for the application"""
     st.markdown("""
         <style>
-        /* Base colors */
-        :root {
-            --primary-blue: #1e3a8a;
-            --accent-blue: #2563eb;
-            --bg-dark: #0f172a;
-            --bg-light: #ffffff;
-            --text-dark: #000000;
-            --text-light: #f8fafc;
-            --border-color: #e2e8f0;
+        /* Title styling */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 600;
+            color: rgb(250, 250, 250);
         }
-        
-        /* Content text */
-        .content-text {
-            color: #000000 !important;
-            line-height: 1.5;
-            margin-top: 0.5rem;
+
+        /* Column styling */
+        [data-testid="column"]:first-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding-right: 1rem;
         }
-        
-        /* Containers */
-        .container {
-            background-color: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 0.5rem 0;
+
+        [data-testid="column"]:last-child {
+            padding-left: 1rem;
         }
-        
-        /* Visual aid */
-        .visual-aid {
-            background-color: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-            color: #000000 !important;
+
+        /* Ensure columns take full height */
+        [data-testid="column"] {
+            height: calc(100vh - 80px);
+            overflow-y: auto;
         }
-        
-        /* Timestamp */
+
+        /* Remove default padding */
+        .block-container {
+            padding: 2rem 1rem !important;
+            max-width: none !important;
+        }
+
+        /* Consistent heading sizes */
+        h1 {
+            font-size: 1.8rem !important;
+        }
+
+        h3 {
+            font-size: 1.2rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        /* Ensure sidebar titles match */
+        .sidebar .block-container {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Transcript styling */
+        .transcript-segment {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.6rem;
+            gap: 0.8rem;
+        }
+
         .timestamp {
-            color: #64748b;
-            font-size: 0.875rem;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            min-width: 45px;
+            padding-top: 0.2rem;
         }
-        
-        /* Key terms */
-        .key-term {
-            background-color: #fef9c3;
-            border-bottom: 2px solid #ca8a04;
-            padding: 0 0.25rem;
-            border-radius: 2px;
-            color: #000000 !important;
+
+        .text {
+            flex: 1;
+            line-height: 1.4;
         }
-        
-        /* Font sizes */
-        .font-size-small { font-size: 0.875rem; }
-        .font-size-medium { font-size: 1rem; }
-        .font-size-large { font-size: 1.25rem; }
-        .font-size-xlarge { font-size: 1.5rem; }
-        
-        /* Confidence indicators */
-        .confidence-low {
-            color: #ef4444;
+
+        /* Remove red underline from selected tabs */
+        .stTabs [data-baseweb="tab-highlight"] {
+            display: none;
+        }
+
+        /* Custom tab styling - only for second column */
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
+            gap: 0.5rem;
+            background-color: rgba(30, 30, 30, 0.8);
+            padding: 0.5rem;
+            border-radius: 2rem;
+        }
+
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"] {
+            height: 2.5rem;
+            padding: 0 1.5rem;
+            color: rgb(148, 148, 148);
+            background-color: transparent;
+            border-radius: 1.25rem;
             font-weight: 500;
         }
-        
-        .confidence-medium {
-            color: #f59e0b;
-            font-weight: 500;
+
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"]:hover {
+            color: rgb(250, 250, 250);
         }
-        
-        .confidence-high {
-            color: #10b981;
-            font-weight: 500;
+
+        [data-testid="column"]:last-child .stTabs [aria-selected="true"] {
+            color: rgb(250, 250, 250) !important;
+            background-color: rgba(50, 50, 50, 0.8) !important;
+            border: none !important;
         }
-        
-        /* Card styles */
-        .card {
-            background-color: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
+
+        /* Hide default tab border in second column */
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab-border"] {
+            display: none;
         }
-        
-        /* Button styles */
-        .stButton button {
-            width: 100%;
-            border-radius: 6px;
-            padding: 0.5rem 1rem;
-            background-color: var(--accent-blue);
-            color: white;
-            border: none;
+
+        /* Keep original styling for first column tabs */
+        [data-testid="column"]:first-child .stTabs [data-baseweb="tab-list"] {
+            gap: 1rem;
         }
-        
-        /* High contrast mode */
-        .high-contrast {
-            background-color: #000000;
-            color: #ffffff !important;
+
+        [data-testid="column"]:first-child .stTabs [data-baseweb="tab"] {
+            padding: 0 1rem;
+            color: rgb(148, 148, 148);
         }
-        
-        .high-contrast .content-text {
-            color: #ffffff !important;
+
+        [data-testid="column"]:first-child .stTabs [aria-selected="true"] {
+            color: rgb(250, 250, 250) !important;
+            border-bottom: 2px solid rgb(250, 250, 250) !important;
         }
-        
-        /* Dark mode */
-        .dark-mode {
-            background-color: #1a1a1a;
-            color: #ffffff !important;
+
+        /* Chat input styling */
+        .stChatInput button {
+            background-color: transparent !important;
+            border: none !important;
         }
-        
-        /* Light mode */
-        .light-mode {
-            background-color: #ffffff;
-            color: #000000 !important;
+
+        .stChatInput button:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .stChatInput button svg {
+            transform: scale(0.8);
+            fill: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .stChatInput button:hover svg {
+            fill: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        /* Sidebar styling */
+        [data-testid="stSidebar"] {
+            padding-top: 1.5rem;
+        }
+
+        [data-testid="stSidebar"] > div:first-child {
+            padding: 1.5rem 1rem;
+        }
+
+        [data-testid="stSidebar"] hr {
+            margin: 1rem 0;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-testid="stSidebar"] h1 {
+            font-size: 1.3rem !important;
+            margin-bottom: 1.5rem !important;
+            padding-bottom: 0.5rem;
+        }
+
+        [data-testid="stSidebar"] h3 {
+            font-size: 0.9rem !important;
+            margin: 1.5rem 0 0.8rem 0 !important;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* File uploader styling */
+        [data-testid="stFileUploader"] {
+            margin-bottom: 1.5rem;
+        }
+
+        [data-testid="stFileUploader"] small {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Slider styling */
+        [data-testid="stSlider"] {
+            padding-top: 1rem;
+            padding-bottom: 1.5rem;
         }
         </style>
     """, unsafe_allow_html=True)
 
-def render_transcript_segment(segment, accessibility_settings):
-    """Render a single transcript segment with accessibility features"""
-    text = segment['text']
-    
-    # Apply key term highlighting
-    if accessibility_settings['highlight_key_terms'] and 'key_terms' in segment:
-        for term_data in segment['key_terms']:
-            term = term_data['term']
-            confidence = term_data['confidence']
-            if term and term.strip():
-                text = text.replace(
-                    term, 
-                    f'<span class="key-term" title="Confidence: {confidence}%">{term}</span>'
-                )
-    
-    # Apply font size
-    font_size_class = {
-        'Small': 'font-size-small',
-        'Medium': 'font-size-medium',
-        'Large': 'font-size-large',
-        'Extra Large': 'font-size-xlarge'
-    }[accessibility_settings['font_size']]
-    
-    # Apply contrast mode
-    contrast_class = {
-        'Standard': '',
-        'High Contrast': 'high-contrast',
-        'Dark Mode': 'dark-mode',
-        'Light Mode': 'light-mode'
-    }[accessibility_settings['contrast_mode']]
-    
-    st.markdown(f"""
-        <div class="container {font_size_class} {contrast_class}">
-            <div class="timestamp">{segment['timestamp']}</div>
-            <div class="content-text">{text}</div>
-            <div class="confidence" style="font-size: 0.8em; color: #666;">
-                Transcription Confidence: {segment['confidence']:.1f}%
-            </div>
+def format_transcript_line(timestamp, text):
+    return f"""
+        <div class="transcript-line">
+            <div class="timestamp">{timestamp}</div>
+            <div class="transcript-text">{text}</div>
         </div>
-    """, unsafe_allow_html=True)
-
-
-def render_visual_aid(visual_aid_data, accessibility_settings):
-    """Render video player or visual aid with confidence score"""
-    if not visual_aid_data:
-        return
-    
-    if "video_file" in visual_aid_data:
-        # Display video player
-        st.video(visual_aid_data["video_file"], start_time=visual_aid_data["start_time"])
-        
-        # Show confidence score
-        confidence = visual_aid_data['confidence']
-        confidence_class = (
-            'confidence-low' if confidence < 50 else
-            'confidence-medium' if confidence < 75 else
-            'confidence-high'
-        )
-        
-        st.markdown(f"""
-            <div class="{confidence_class}">
-                Confidence: {confidence}%
-            </div>
-        """, unsafe_allow_html=True)
-    else:
-        # Fallback to original visual aid display if no video
-        st.info("No video content available for this segment.")
-    
-    font_size_class = {
-        'Small': 'font-size-small',
-        'Medium': 'font-size-medium',
-        'Large': 'font-size-large',
-        'Extra Large': 'font-size-xlarge'
-    }[accessibility_settings['font_size']]
-    
-    contrast_class = {
-        'Standard': '',
-        'High Contrast': 'high-contrast',
-        'Dark Mode': 'dark-mode',
-        'Light Mode': 'light-mode'
-    }[accessibility_settings['contrast_mode']]
-    
-    confidence = visual_aid_data['confidence']
-    confidence_class = (
-        'confidence-low' if confidence < 50 else
-        'confidence-medium' if confidence < 75 else
-        'confidence-high'
-    )
-    
-    st.markdown(f"""
-        <div class="visual-aid {font_size_class} {contrast_class}">
-            <h4>Visual Summary</h4>
-            <p class="content-text">{visual_aid_data['description']}</p>
-            <div class="{confidence_class}">
-                Confidence: {confidence}%
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-def render_qa_response(qa_item, accessibility_settings):
-    """Render a Q&A response with confidence score"""
-    confidence = qa_item['response']['confidence']
-    confidence_class = (
-        'confidence-low' if confidence < 50 else
-        'confidence-medium' if confidence < 75 else
-        'confidence-high'
-    )
-    
-    font_size_class = {
-        'Small': 'font-size-small',
-        'Medium': 'font-size-medium',
-        'Large': 'font-size-large',
-        'Extra Large': 'font-size-xlarge'
-    }[accessibility_settings['font_size']]
-    
-    st.markdown(f"""
-        <div class="card {font_size_class}">
-            <div class="content-text">
-                <strong>Q: {qa_item['question']}</strong><br>
-                A: {qa_item['response']['answer']}
-            </div>
-            <div class="{confidence_class}" style="margin-top: 0.5rem;">
-                Confidence: {confidence}%
-            </div>
-            <div class="timestamp">
-                {qa_item['response']['timestamp']}
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-def render_term_definition(term, definition_data, accessibility_settings):
-    """Render a term definition with confidence score"""
-    confidence = definition_data['confidence']
-    confidence_class = (
-        'confidence-low' if confidence < 50 else
-        'confidence-medium' if confidence < 75 else
-        'confidence-high'
-    )
-    
-    font_size_class = {
-        'Small': 'font-size-small',
-        'Medium': 'font-size-medium',
-        'Large': 'font-size-large',
-        'Extra Large': 'font-size-xlarge'
-    }[accessibility_settings['font_size']]
-    
-    st.markdown(f"""
-        <div class="card {font_size_class}">
-            <strong class="key-term">{term}</strong>
-            <p class="content-text">{definition_data['definition']}</p>
-            <div class="{confidence_class}">
-                Confidence: {confidence}%
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
+    """
 
 def create_streamlit_ui():
-    """Create the main Streamlit user interface"""
-    st.set_page_config(page_title="Audio Content Analysis", layout="wide")
+    st.set_page_config(page_title="Content Analysis", layout="wide")
     set_custom_style()
     init_session_state()
-    
-    # Sidebar
+
+    # Left sidebar content
     with st.sidebar:
-        st.markdown('# Audio Content Analysis')
+        st.markdown('# Earsforeveryone')
         st.markdown('---')
         
-        # API Key Input
-        openai_api_key = st.text_input("OpenAI API Key", type="password")
-        if openai_api_key:
-            if not st.session_state.rag_system or st.session_state.api_key != openai_api_key:
-                st.session_state.rag_system = EnhancedAudioRAG(openai_api_key)
-                st.session_state.api_key = openai_api_key
+        st.markdown('### OpenAI API Key')
+        openai_api_key = st.text_input("", type="password", placeholder="Enter your API key", label_visibility="collapsed")
         
-        # MP3 File Upload
-        st.markdown('### Upload Audio')
-        uploaded_file = st.file_uploader("Choose an audio/video file", type=['mp3', 'mp4'])
-        
-        if uploaded_file:
-            if st.session_state.rag_system:
-                file_id = f"{uploaded_file.name}_{uploaded_file.size}"
-                
-                # Only process if it's a new file or hasn't been processed
-                if file_id != st.session_state.current_file_name:
-                    with st.spinner("Processing audio file..."):
-                        try:
-                            if st.session_state.rag_system.process_mp3_file(uploaded_file):
-                                st.session_state.current_file_name = file_id
-                                st.session_state.file_content_processed = True
-                                st.success("Audio file processed successfully!")
-                                # Reset state for new file
-                                st.session_state.summary_generated = False
-                                st.session_state.current_summary = ""
-                                st.session_state.qa_history = []
-                                st.session_state.term_definitions = {}
-                        except Exception as e:
-                            st.error(f"Error processing file: {str(e)}")
-                            st.session_state.file_content_processed = False
-            else:
-                st.warning("Please enter your API key first")
-        
-        # Accessibility Settings
-        st.markdown('### Accessibility Settings')
-        st.session_state.accessibility_settings['font_size'] = st.select_slider(
-            'Text Size',
-            options=['Small', 'Medium', 'Large', 'Extra Large']
+        st.markdown('### Upload Content')
+        uploaded_file = st.file_uploader(
+            "Choose an audio/video file",
+            type=['mp3', 'mp4', 'mpeg4'],
+            label_visibility="collapsed"
         )
         
-        st.session_state.accessibility_settings['contrast_mode'] = st.selectbox(
-            'Display Mode',
-            ['Standard', 'High Contrast', 'Dark Mode', 'Light Mode']
+        # Process uploaded file
+        if uploaded_file and process_upload(uploaded_file):
+            st.success("File processed successfully!")
+        
+        st.markdown('### Layout Settings')
+        column_width = st.slider(
+            "Adjust column width",
+            min_value=30,
+            max_value=70,
+            value=52,
+            label_visibility="collapsed"
         )
-        
-        st.session_state.accessibility_settings['show_visual_aids'] = st.checkbox(
-            'Show Visual Aids',
-            value=True
-        )
-        
-        st.session_state.accessibility_settings['highlight_key_terms'] = st.checkbox(
-            'Highlight Key Terms',
-            value=True
-        )
-    
-    # Main content tabs
-    tabs = st.tabs([
-        "📝 Transcript",
-        "❓ Q&A Assistant",
-        "📚 Study Materials",
-        "⚙️ Accessibility Tools"
-    ])
-    
-    # Transcript tab
-    with tabs[0]:
-        st.markdown("### Audio Transcript")
-        if not st.session_state.rag_system:
-            st.info("Enter your API key to begin")
-            return
-            
-        if not st.session_state.file_content_processed:
-            st.info("Upload an MP3 file to see transcription")
-            return
-        if uploaded_file and uploaded_file.name.lower().endswith('.mp4'):
-            st.markdown("#### visual aid")
-            st.video(uploaded_file) 
-         
-        cols = st.columns([2, 1])
-        with cols[0]:
-            for segment in st.session_state.rag_system.transcribed_segments:
-                render_transcript_segment(segment, st.session_state.accessibility_settings)
-        
-        with cols[1]:
-            if st.session_state.accessibility_settings['show_visual_aids']:
-                if st.session_state.rag_system.transcribed_segments:
-                    last_segment = st.session_state.rag_system.transcribed_segments[-1]
-                    if 'visual_aid' in last_segment:
-                        render_visual_aid(
-                            last_segment['visual_aid'],
-                            st.session_state.accessibility_settings
-                        )
-    
-    # Q&A Assistant tab
-    with tabs[1]:
-        st.markdown("### Ask Questions About the Content")
-        if not st.session_state.rag_system:
-            st.info("Enter your API key to begin")
-            return
-            
-        if not st.session_state.file_content_processed:
-            st.info("Upload an MP3 file to ask questions")
-            return
-            
-        # Question input and submission
-        question = st.text_input(
-            "Ask a question about the content",
-            placeholder="What are the main points discussed?",
-            key="qa_input"
-        )
-        
-        if st.button("Ask Question", type="primary", key="ask_button"):
-            if question:
-                with st.spinner("Generating answer..."):
-                    response = st.session_state.rag_system.ask_question(question)
-                    st.session_state.qa_history.append({
-                        "question": question,
-                        "response": response
-                    })
-        
-        # Display QA history
-        if st.session_state.qa_history:
-            st.markdown("### Previous Questions")
-            for qa in reversed(st.session_state.qa_history):
-                render_qa_response(qa, st.session_state.accessibility_settings)
-    
-    # Study Materials tab
-    # Study Materials tab
-    with tabs[2]:
-        st.markdown("### Study Materials & Resources")
-        if not st.session_state.rag_system:
-            st.info("Enter your API key to begin")
-            return
 
-        if not st.session_state.file_content_processed:
-            st.info("Upload an audio/video file to generate study materials")
-            return
-            
-        # Create subtabs
-        timeline_tab, summary_tab, glossary_tab = st.tabs([
-            "📅 Timeline", 
-            "📝 Summary", 
-            "📚 Glossary"
-        ])
+    # Calculate column ratios based on slider value
+    left_ratio = column_width / 100
+    right_ratio = 1 - left_ratio
+
+    # Create columns with dynamic ratio
+    col1, col2 = st.columns([left_ratio, right_ratio])
+
+    # Main column content
+    with col1:
+        tab1, tab2 = st.tabs(["Transcript", "Visual aid"])
         
-        # Timeline tab
-        with timeline_tab:
-            timeline_func = st.session_state.rag_system.process_transcript_timeline()
-            if timeline_func:
-                timeline_func()
+        with tab1:
+            if st.session_state.file_content_processed:
+                for segment in st.session_state.rag_system.transcribed_segments:
+                    st.markdown(f"""
+                        <div class="transcript-segment">
+                            <div class="timestamp">{segment['timestamp']}</div>
+                            <div class="text">{segment['text']}</div>
+                        </div>
+                    """, unsafe_allow_html=True)
+            else:
+                st.info("Upload a file to see transcription")
         
-        # Summary tab
-        with summary_tab:
-            st.markdown("#### Content Summary")
-            if not st.session_state.summary_generated:
-                if st.button("Generate Summary", type="primary"):
-                    with st.spinner("Generating summary..."):
-                        try:
-                            summary_data = st.session_state.rag_system.generate_summary()
-                            if summary_data:
-                                st.session_state.current_summary = summary_data
-                                st.session_state.summary_generated = True
-                        except Exception as e:
-                            st.error(f"Error generating summary: {str(e)}")
-            
-            if st.session_state.summary_generated and st.session_state.current_summary:
-                confidence = st.session_state.current_summary['confidence']
-                confidence_class = (
-                    'confidence-low' if confidence < 50 else
-                    'confidence-medium' if confidence < 75 else
-                    'confidence-high'
-                )
+        with tab2:
+            if uploaded_file and uploaded_file.name.lower().endswith('.mp4'):
+                st.video(uploaded_file)
+            else:
+                st.info("Upload a video file to view")
+
+    # Features column content
+    with col2:
+        st.markdown("### Content Analysis")
+        feature_tabs = st.tabs(["Chat", "Flashcards", "Summary"])
+        
+        # Chat tab
+        with feature_tabs[0]:
+            st.markdown("#### Chat with your content")
+            if "messages" not in st.session_state:
+                st.session_state.messages = []
                 
-                st.markdown(f"""
-                    <div class="card">
-                        <div class="content-text">
-                            {st.session_state.current_summary['summary']}
-                        </div>
-                        <div class="{confidence_class}" style="margin-top: 0.5rem;">
-                            Confidence: {confidence}%
-                        </div>
-                        <div class="timestamp">
-                            Generated at: {st.session_state.current_summary['timestamp']}
-                        </div>
-                    </div>
-                """, unsafe_allow_html=True)
-        
-        # Glossary tab
-        with glossary_tab:
-            st.markdown("#### Key Terms Glossary")
-            if st.session_state.rag_system.key_terms:
-                undefined_terms = [term for term in st.session_state.rag_system.key_terms 
-                                if term not in st.session_state.term_definitions]
+            # Display chat interface if file is processed
+            if st.session_state.file_content_processed:
+                for message in st.session_state.messages:
+                    with st.chat_message(message["role"]):
+                        st.markdown(message["content"])
+                        # Display confidence score for assistant messages
+                        if message["role"] == "assistant" and "confidence" in message:
+                            st.progress(message["confidence"] / 100)
+                            st.caption(f"Confidence: {message['confidence']}%")
                 
-                if undefined_terms and st.button("Generate Definitions"):
-                    with st.spinner("Generating definitions..."):
-                        for term in undefined_terms:
-                            try:
+                if prompt := st.chat_input("Ask anything about the content..."):
+                    st.session_state.messages.append({"role": "user", "content": prompt})
+                    if st.session_state.rag_system:
+                        response = st.session_state.rag_system.ask_question(prompt)
+                        st.session_state.messages.append({
+                            "role": "assistant",
+                            "content": response["answer"],
+                            "confidence": response["confidence"]  # Add confidence score
+                        })
+                        st.rerun()
+            else:
+                st.info("Upload and process a file to start chatting")
+
+        # Flashcards tab
+        with feature_tabs[1]:
+            st.markdown("#### Key Terms & Definitions")
+            if st.session_state.file_content_processed and st.session_state.rag_system:
+                if not st.session_state.definitions_generated:
+                    with st.spinner("Generating flashcards..."):
+                        terms = list(st.session_state.rag_system.key_terms)
+                        for term in terms:
+                            if term not in st.session_state.term_definitions:
                                 definition = st.session_state.rag_system.generate_term_definition(term)
                                 if definition:
                                     st.session_state.term_definitions[term] = definition
-                            except Exception as e:
-                                st.error(f"Error generating definition for {term}: {str(e)}")
-                
-                # Display glossary
-                for term in sorted(st.session_state.rag_system.key_terms):
-                    with st.expander(term):
-                        if term in st.session_state.term_definitions:
-                            definition_data = st.session_state.term_definitions[term]
-                            render_term_definition(
-                                term,
-                                definition_data,
-                                st.session_state.accessibility_settings
-                            )
-                        else:
-                            st.info("Click 'Generate Definitions' to get the definition.")
+                        st.session_state.definitions_generated = True
+
+                for term in st.session_state.term_definitions:
+                    with st.expander(f"📝 {term}"):
+                        definition = st.session_state.term_definitions[term]
+                        st.markdown(f"**Definition:** {definition['definition']}")
+                        st.progress(definition['confidence'] / 100)
+                        st.caption(f"Confidence: {definition['confidence']}%")
             else:
-                st.info("No key terms identified in the content yet")
-        
-        # Export options
-        st.markdown("### Export Options")
-        export_cols = st.columns(3)
-        
-        with export_cols[0]:
-            if st.button("📝 Export Transcript"):
-                transcript = st.session_state.rag_system.export_content("transcript")
-                if transcript:
-                    st.download_button(
-                        "Download Transcript",
-                        transcript,
-                        "transcript.txt",
-                        "text/plain",
-                        key="download_transcript"
+                st.info("Upload a file to generate flashcards")
+
+        # Summary tab
+        with feature_tabs[2]:
+            st.markdown("#### Content Summary")
+            if st.session_state.file_content_processed and st.session_state.rag_system:
+                if not st.session_state.summary_generated:
+                    with st.spinner("Generating summary..."):
+                        summary = st.session_state.rag_system.generate_summary()
+                        if summary:
+                            st.session_state.summary_with_confidence = summary
+                            st.session_state.summary_generated = True
+
+                if st.session_state.summary_with_confidence:
+                    st.markdown(st.session_state.summary_with_confidence["summary"])
+                    st.progress(st.session_state.summary_with_confidence["confidence"] / 100)
+                    st.caption(f"Confidence: {st.session_state.summary_with_confidence['confidence']}%")
+            else:
+                st.info("Upload a file to generate summary")
+
+def process_upload(uploaded_file):
+    if st.session_state.rag_system:
+        file_id = f"{uploaded_file.name}_{uploaded_file.size}"
+        if file_id != st.session_state.current_file_name:
+            with st.spinner("Processing file..."):
+                try:
+                    if st.session_state.rag_system.process_mp3_file(uploaded_file):
+                        st.session_state.current_file_name = file_id
+                        st.session_state.file_content_processed = True
+                        reset_state()
+                        return True
+                except Exception as e:
+                    st.error(f"Error: {str(e)}")
+                    st.session_state.file_content_processed = False
+    return False
+
+def reset_state():
+    st.session_state.summary_generated = False
+    st.session_state.current_summary = ""
+    st.session_state.qa_history = []
+    st.session_state.term_definitions = {}
+
+def handle_chat_question(question):
+    with st.spinner("Generating response..."):
+        response = st.session_state.rag_system.ask_question(question)
+        st.session_state.qa_history.append({
+            "question": question,
+            "response": response
+        })
+
+def render_glossary():
+    st.markdown("### Key Terms")
+    if st.session_state.rag_system and st.session_state.rag_system.key_terms:
+        for term in sorted(st.session_state.rag_system.key_terms):
+            with st.expander(term):
+                if term in st.session_state.term_definitions:
+                    render_term_definition(
+                        term,
+                        st.session_state.term_definitions[term],
+                        st.session_state.accessibility_settings
                     )
-        
-        with export_cols[1]:
-            if st.button("📖 Export Glossary"):
-                glossary = st.session_state.rag_system.export_content("glossary")
-                if glossary:
-                    st.download_button(
-                        "Download Glossary",
-                        glossary,
-                        "glossary.txt",
-                        "text/plain",
-                        key="download_glossary"
-                    )
-        
-        with export_cols[2]:
-            if st.button("📚 Export Study Guide"):
-                study_guide = st.session_state.rag_system.export_content("study_guide")
-                if study_guide:
-                    st.download_button(
-                        "Download Study Guide",
-                        study_guide,
-                        "study_guide.txt",
-                        "text/plain",
-                        key="download_study_guide"
-                    )
-    with tabs[3]:
-        st.markdown("### Accessibility Tools & Settings")
-        
-        cols = st.columns(2)
-        with cols[0]:
-            st.markdown("#### Current Settings")
-            st.markdown(f"""
-                - Font Size: {st.session_state.accessibility_settings['font_size']}
-                - Display Mode: {st.session_state.accessibility_settings['contrast_mode']}
-                - Visual Aids: {'Enabled' if st.session_state.accessibility_settings['show_visual_aids'] else 'Disabled'}
-                - Key Terms Highlighting: {'Enabled' if st.session_state.accessibility_settings['highlight_key_terms'] else 'Disabled'}
-            """)
-            
-            if st.button("Reset to Defaults"):
-                st.session_state.accessibility_settings = {
-                    'font_size': 'Medium',
-                    'contrast_mode': 'Standard',
-                    'show_visual_aids': True,
-                    'highlight_key_terms': True
-                }
-                st.success("Settings reset to defaults!")
-                st.rerun()
-        
-        with cols[1]:
-            st.markdown("#### Keyboard Shortcuts")
-            st.markdown("""
-                - **Spacebar**: Play/Pause audio
-                - **Up/Down**: Adjust font size
-                - **Ctrl + F**: Search content
-                - **Ctrl + H**: Toggle high contrast
-            """)
+                else:
+                    st.info("Definition pending")
+
+def generate_summary():
+    with st.spinner("Generating summary..."):
+        summary_data = st.session_state.rag_system.generate_summary()
+        if summary_data:
+            st.session_state.current_summary = summary_data
+            st.session_state.summary_generated = True
+
+def display_summary():
+    st.markdown(f"""
+        <div class="card">
+            {st.session_state.current_summary['summary']}
+            <div class="confidence">
+                Confidence: {st.session_state.current_summary['confidence']}%
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     create_streamlit_ui()
