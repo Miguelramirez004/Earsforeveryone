@@ -81,7 +81,6 @@ def init_session_state():
             'definitions_generated': False,
             'summary_with_confidence': None,
             'messages': [],
-            'definitions_generated': False,
             'term_definitions': {},
             'summary_with_confidence': None
         }
@@ -711,48 +710,6 @@ def set_custom_style():
         .stChatInput button:hover svg {
             fill: rgba(255, 255, 255, 0.8) !important;
         }
-
-        /* Sidebar styling */
-        [data-testid="stSidebar"] {
-            padding-top: 1.5rem;
-        }
-
-        [data-testid="stSidebar"] > div:first-child {
-            padding: 1.5rem 1rem;
-        }
-
-        [data-testid="stSidebar"] hr {
-            margin: 1rem 0;
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        [data-testid="stSidebar"] h1 {
-            font-size: 1.3rem !important;
-            margin-bottom: 1.5rem !important;
-            padding-bottom: 0.5rem;
-        }
-
-        [data-testid="stSidebar"] h3 {
-            font-size: 0.9rem !important;
-            margin: 1.5rem 0 0.8rem 0 !important;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        /* File uploader styling */
-        [data-testid="stFileUploader"] {
-            margin-bottom: 1.5rem;
-        }
-
-        [data-testid="stFileUploader"] small {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        /* Slider styling */
-        [data-testid="stSlider"] {
-            padding-top: 1rem;
-            padding-bottom: 1.5rem;
-        }
         </style>
     """, unsafe_allow_html=True)
 
@@ -776,25 +733,34 @@ def create_streamlit_ui():
         
         st.markdown('### OpenAI API Key')
         openai_api_key = st.text_input("", type="password", placeholder="Enter your API key", label_visibility="collapsed")
+        if openai_api_key:
+            if not st.session_state.rag_system or st.session_state.api_key != openai_api_key:
+                st.session_state.rag_system = EnhancedAudioRAG(openai_api_key)
+                st.session_state.api_key = openai_api_key
         
         st.markdown('### Upload Content')
-        uploaded_file = st.file_uploader(
-            "Choose an audio/video file",
-            type=['mp3', 'mp4', 'mpeg4'],
-            label_visibility="collapsed"
-        )
+        st.markdown('Choose an audio/video file')
+        uploaded_file = st.file_uploader("", type=['mp3', 'mp4', 'mpeg4'], label_visibility="collapsed")
         
         # Process uploaded file
-        if uploaded_file and process_upload(uploaded_file):
-            st.success("File processed successfully!")
+        if uploaded_file and not st.session_state.current_file_processed:
+            if st.session_state.rag_system:
+                with st.spinner("Processing file..."):
+                    if st.session_state.rag_system.process_mp3_file(uploaded_file):
+                        st.session_state.current_file_processed = True
+                        st.session_state.file_content_processed = True
+                        st.success("File processed successfully!")
+                    else:
+                        st.error("Error processing file")
         
-        st.markdown('### Layout Settings')
+        # Layout settings
+        st.markdown("### Layout Settings")
         column_width = st.slider(
             "Adjust column width",
             min_value=30,
             max_value=70,
-            value=52,
-            label_visibility="collapsed"
+            value=48,
+            help="Drag to adjust the width of the main content column"
         )
 
     # Calculate column ratios based on slider value
@@ -842,7 +808,6 @@ def create_streamlit_ui():
                 for message in st.session_state.messages:
                     with st.chat_message(message["role"]):
                         st.markdown(message["content"])
-                        # Display confidence score for assistant messages
                         if message["role"] == "assistant" and "confidence" in message:
                             st.progress(message["confidence"] / 100)
                             st.caption(f"Confidence: {message['confidence']}%")
@@ -854,7 +819,7 @@ def create_streamlit_ui():
                         st.session_state.messages.append({
                             "role": "assistant",
                             "content": response["answer"],
-                            "confidence": response["confidence"]  # Add confidence score
+                            "confidence": response["confidence"]
                         })
                         st.rerun()
             else:
