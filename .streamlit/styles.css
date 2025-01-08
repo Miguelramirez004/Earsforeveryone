@@ -38,21 +38,9 @@ h1, h2, h3, h4, h5, h6 {
     max-width: none !important;
 }
 
-/* Consistent heading sizes */
-h1 {
-    font-size: 1.8rem !important;
-}
-
-h3 {
-    font-size: 1.2rem !important;
-    margin-bottom: 1rem !important;
-}
-
-/* Info box styling */
-.stAlert {
-    background-color: rgba(28, 131, 225, 0.1);
-    color: rgb(250, 250, 250);
-    border: 1px solid rgba(28, 131, 225, 0.2);
+/* Remove red underline from selected tabs */
+.stTabs [data-baseweb="tab-highlight"] {
+    display: none;
 }
 
 /* Tab styling - only for second column */
