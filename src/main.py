@@ -498,18 +498,20 @@ def set_custom_style():
         <style>
         /* Column separator styling */
         div[data-testid="column"]:nth-of-type(1) {
-            border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-            padding-right: 2rem !important;
+            position: relative !important;
+            padding-right: 3rem !important;
         }
 
         div[data-testid="column"]:nth-of-type(2) {
-            padding-left: 2rem !important;
+            padding-left: 3rem !important;
+            margin-left: 1rem !important;
         }
 
         /* Ensure the columns have proper spacing */
         div[data-testid="stHorizontalBlock"] {
-            gap: 0 !important;
+            gap: 2rem !important;
         }
+        
         /* Overall app styling */
         .stApp {
             background-color: #161B22;
