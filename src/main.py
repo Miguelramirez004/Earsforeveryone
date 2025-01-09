@@ -632,6 +632,10 @@ def create_streamlit_ui():
         initial_sidebar_state="expanded"
     )
     
+    # Load custom CSS
+    with open('.streamlit/style.css') as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    
     # Immediately after page config, set critical styles
     st.markdown("""
         <style>
