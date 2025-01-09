@@ -625,8 +625,37 @@ def format_transcript_line(timestamp, text):
     """
 
 def create_streamlit_ui():
-    st.set_page_config(page_title="Content Analysis", layout="wide")
+    # First, set the page config
+    st.set_page_config(
+        page_title="Content Analysis", 
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+    
+    # Immediately after page config, set critical styles
+    st.markdown("""
+        <style>
+        /* Critical column styling */
+        div[data-testid="column"]:nth-of-type(1) {
+            position: relative !important;
+            padding-right: 2rem !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        div[data-testid="column"]:nth-of-type(2) {
+            padding-left: 2rem !important;
+        }
+
+        div[data-testid="stHorizontalBlock"] {
+            gap: 2rem !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    # Then load rest of custom styles
     set_custom_style()
+    
+    # Initialize session state
     init_session_state()
 
     # Left sidebar content
@@ -670,16 +699,14 @@ def create_streamlit_ui():
     left_ratio = column_width / 100
     right_ratio = 1 - left_ratio
 
-    # Create columns with dynamic ratio
+    # Create main columns with dynamic ratio
     col1, col2 = st.columns([left_ratio, right_ratio])
 
-    # Main column content
+    # Main column content (left)
     with col1:
         tab1, tab2 = st.tabs(["Transcript", "Visual aid"])
         
-
         with tab1:
-            
             if st.session_state.file_content_processed:
                 for segment in st.session_state.rag_system.transcribed_segments:
                     st.markdown(f"""
@@ -701,7 +728,7 @@ def create_streamlit_ui():
             else:
                 st.info("Upload a video file to view")
 
-    # Features column content
+    # Content Analysis column (right)
     with col2:
         st.markdown("### Content Analysis")
         feature_tabs = st.tabs(["Chat", "Flashcards", "Summary"])
@@ -711,8 +738,7 @@ def create_streamlit_ui():
             st.markdown("#### Chat with your content")
             if "messages" not in st.session_state:
                 st.session_state.messages = []
-                
-            # Display chat interface if file is processed
+            
             if st.session_state.file_content_processed:
                 for message in st.session_state.messages:
                     with st.chat_message(message["role"]):
