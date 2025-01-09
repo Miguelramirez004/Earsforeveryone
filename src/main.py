@@ -598,20 +598,75 @@ def set_custom_style():
             color: rgb(250, 250, 250);
         }
 
-        /* Main title */
-        [data-testid="stSidebar"] h1 {
-            font-size: 1.5rem !important;
-            margin-bottom: 2rem;
+        /* Column styling - increased spacing and divider */
+        [data-testid="column"]:first-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding-right: 2rem !important;  /* Increased padding */
+            margin-right: 2rem;  /* Added margin for more spacing */
         }
 
-        /* Section headers */
-        [data-testid="stSidebar"] h3 {
-            font-size: 0.875rem !important;
-            color: rgb(200, 200, 200);
-            margin: 1.5rem 0 0.5rem 0;
+        [data-testid="column"]:last-child {
+            padding-left: 2rem !important;  /* Increased padding */
         }
 
-        /* API Key input styling */
+        /* Tab styling - ONLY for right column (Content Analysis) */
+        /* Reset default tab styling first */
+        .stTabs [data-baseweb="tab-list"] {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            padding: 0 1rem;
+            color: rgb(148, 148, 148);
+            background-color: transparent;
+            font-size: 0.875rem;
+            font-weight: 400;
+            border-radius: 0;
+        }
+
+        /* Special styling only for right column tabs */
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
+            gap: 0.5rem;
+            background-color: rgba(30, 30, 30, 0.8);
+            padding: 0.5rem;
+            border-radius: 2rem;
+        }
+
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"] {
+            height: 2rem;
+            padding: 0 1.5rem;
+            border-radius: 1rem;
+        }
+
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"]:hover {
+            color: rgb(250, 250, 250);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-testid="column"]:last-child .stTabs [aria-selected="true"] {
+            color: rgb(250, 250, 250) !important;
+            background-color: rgba(50, 50, 50, 0.8) !important;
+            border: none !important;
+        }
+
+        /* Left column tabs - simpler style */
+        [data-testid="column"]:first-child .stTabs [data-baseweb="tab-list"] {
+            gap: 1rem;
+        }
+
+        [data-testid="column"]:first-child .stTabs [aria-selected="true"] {
+            color: rgb(250, 250, 250) !important;
+            border-bottom: 2px solid rgb(250, 250, 250) !important;
+            background-color: transparent !important;
+        }
+
+        /* Remove tab highlight for all tabs */
+        .stTabs [data-baseweb="tab-highlight"] {
+            display: none;
+        }
+
+        /* Rest of the styles remain the same */
         .stTextInput input {
             background-color: #0D1117 !important;
             border: 1px solid #30363D !important;
@@ -621,7 +676,6 @@ def set_custom_style():
             font-size: 0.875rem;
         }
 
-        /* File uploader styling */
         [data-testid="stFileUploader"] {
             background-color: #0D1117;
             border: 1px dashed #30363D;
@@ -629,49 +683,9 @@ def set_custom_style():
             padding: 1.5rem;
         }
 
-        .uploadedFile {
-            background-color: #0D1117;
-            border-radius: 6px;
-            padding: 0.75rem;
-        }
-
-        /* Main content area styling */
         .main .block-container {
             padding: 2rem 1rem !important;
             max-width: none !important;
-        }
-
-        /* Tab styling */
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 0.25rem;
-            padding: 0.5rem;
-            background-color: transparent;
-        }
-
-        .stTabs [data-baseweb="tab"] {
-            height: 2rem;
-            padding: 0 1rem;
-            color: rgb(148, 148, 148);
-            background-color: transparent;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-            font-weight: 400;
-        }
-
-        .stTabs [data-baseweb="tab"]:hover {
-            color: rgb(250, 250, 250);
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .stTabs [aria-selected="true"] {
-            color: rgb(250, 250, 250) !important;
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            border: none !important;
-        }
-
-        /* Remove tab highlight */
-        .stTabs [data-baseweb="tab-highlight"] {
-            display: none;
         }
 
         /* Content cards */
@@ -682,60 +696,10 @@ def set_custom_style():
             padding: 1rem;
         }
 
-        /* Slider styling */
-        [data-testid="stSlider"] {
-            padding: 1rem 0;
-        }
-
-        .stSlider [data-baseweb="slider"] {
-            margin-top: 1rem;
-        }
-
-        /* Transcript styling */
-        .transcript-segment {
-            padding: 0.5rem;
-            border-bottom: 1px solid #30363D;
-        }
-
-        .timestamp {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .text {
-            color: rgb(250, 250, 250);
-            line-height: 1.5;
-        }
-
-        /* Chat container */
-        .stChatMessage {
-            background-color: #0D1117;
-            border-radius: 6px;
-            padding: 1rem;
-            margin: 0.5rem 0;
-        }
-
-        /* Chat input */
-        .stChatInput {
-            border-color: #30363D !important;
-        }
-
-        .stChatInput input {
-            background-color: #0D1117 !important;
-            border-color: #30363D !important;
-        }
-
-        /* Button styling */
-        .stButton button {
-            background-color: #238636;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 0.5rem 1rem;
-        }
-
-        .stButton button:hover {
-            background-color: #2EA043;
+        /* Ensure columns take full height */
+        [data-testid="column"] {
+            height: calc(100vh - 80px);
+            overflow-y: auto;
         }
         </style>
     """, unsafe_allow_html=True)
