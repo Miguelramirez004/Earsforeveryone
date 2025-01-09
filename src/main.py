@@ -576,199 +576,114 @@ class EnhancedAudioRAG:
 def set_custom_style():
     st.markdown("""
         <style>
-        /* Overall app styling */
-        .stApp {
-            background-color: #0E1117;
+        /* Force the main app background color */
+        .main, .stApp {
+            background-color: #0E1117 !important;
         }
 
-        /* Sidebar styling */
-        [data-testid="stSidebar"] {
-            background-color: #1B2028;
-            padding: 2rem 1rem;
-        }
-
-        [data-testid="stSidebar"] .block-container {
-            padding: 0 !important;
-        }
-
-        /* Title styling */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            font-weight: 500;
-            color: rgb(250, 250, 250);
-        }
-
-        /* Main content area styling */
+        /* Main content area - more specific */
         .main .block-container {
-            padding: 2rem 1rem !important;
+            padding-top: 1rem !important;
             max-width: none !important;
         }
 
-        /* Column styling with proper separation */
-        [data-testid="column"]:first-child {
-            position: relative;
-            padding-right: 3rem !important;
-            margin-right: 3rem !important;
+        /* Column styling with forced separation */
+        div[data-testid="column"]:nth-of-type(1) {
+            position: relative !important;
+            padding-right: 2rem !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+            margin-right: 2rem !important;
         }
 
-        [data-testid="column"]:first-child::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 1px;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.1);
-            pointer-events: none;
+        div[data-testid="column"]:nth-of-type(2) {
+            padding-left: 2rem !important;
         }
 
-        [data-testid="column"]:last-child {
-            padding-left: 3rem !important;
+        /* Tab styling for first column */
+        div[data-testid="column"]:nth-of-type(1) div[data-testid="stHorizontalBlock"] {
+            gap: 0.5rem !important;
         }
 
-        /* Ensure columns take full height */
-        [data-testid="column"] {
-            height: calc(100vh - 80px);
-            overflow-y: auto;
-        }
-
-        /* Left column tab styling */
-        [data-testid="column"]:first-child .stTabs [data-baseweb="tab-list"] {
-            gap: 1rem;
-            background-color: transparent;
-            padding: 0;
-        }
-
-        [data-testid="column"]:first-child .stTabs [data-baseweb="tab"] {
-            color: rgb(148, 148, 148);
-            background-color: transparent;
-            padding: 0;
-            font-size: 0.875rem;
-        }
-
-        [data-testid="column"]:first-child .stTabs [aria-selected="true"] {
-            color: rgb(250, 250, 250) !important;
+        div[data-testid="column"]:nth-of-type(1) button[data-baseweb="tab"] {
             background-color: transparent !important;
+            border: none !important;
+            color: rgb(148, 148, 148) !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.875rem !important;
+        }
+
+        div[data-testid="column"]:nth-of-type(1) button[aria-selected="true"] {
             border-bottom: 2px solid rgb(250, 250, 250) !important;
-        }
-
-        /* Right column tab styling */
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
-            background-color: rgba(30, 30, 30, 0.8);
-            padding: 0.3rem;
-            border-radius: 2rem;
-            gap: 0.5rem;
-        }
-
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"] {
-            height: 2rem;
-            padding: 0 1.5rem;
-            color: rgb(148, 148, 148);
-            background-color: transparent;
-            border-radius: 1rem;
-            font-size: 0.875rem;
-            border: none;
-        }
-
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"]:hover {
-            color: rgb(250, 250, 250);
-        }
-
-        [data-testid="column"]:last-child .stTabs [aria-selected="true"] {
             color: rgb(250, 250, 250) !important;
+        }
+
+        /* Tab styling for second column */
+        div[data-testid="column"]:nth-of-type(2) div[role="tablist"] {
+            background-color: rgba(30, 30, 30, 0.8) !important;
+            border-radius: 2rem !important;
+            padding: 0.3rem !important;
+            gap: 0.5rem !important;
+        }
+
+        div[data-testid="column"]:nth-of-type(2) button[data-baseweb="tab"] {
+            border-radius: 1rem !important;
+            background-color: transparent !important;
+            border: none !important;
+            color: rgb(148, 148, 148) !important;
+            padding: 0.5rem 1.5rem !important;
+            font-size: 0.875rem !important;
+        }
+
+        div[data-testid="column"]:nth-of-type(2) button[aria-selected="true"] {
             background-color: rgba(50, 50, 50, 0.8) !important;
+            color: rgb(250, 250, 250) !important;
+        }
+
+        /* Hide tab highlight */
+        button[data-baseweb="tab"] {
             border: none !important;
         }
 
-        /* Remove tab highlights */
-        .stTabs [data-baseweb="tab-highlight"] {
-            display: none;
+        div[data-baseweb="tab-highlight"] {
+            display: none !important;
+        }
+
+        /* Sidebar styling */
+        section[data-testid="stSidebar"] {
+            background-color: #1B2028 !important;
+            width: 250px !important;
+        }
+
+        section[data-testid="stSidebar"] .block-container {
+            padding: 2rem 1rem !important;
         }
 
         /* Input styling */
         .stTextInput input {
             background-color: #0D1117 !important;
             border: 1px solid #30363D !important;
-            border-radius: 6px;
-            color: white;
-            padding: 0.5rem;
+            border-radius: 6px !important;
+            color: white !important;
+            padding: 0.5rem !important;
         }
 
-        /* File uploader styling */
-        [data-testid="stFileUploader"] {
-            background-color: #0D1117;
-            border: 1px dashed #30363D;
-            border-radius: 6px;
-            padding: 1.5rem;
+        /* Remove default Streamlit elements we don't want */
+        footer {
+            display: none !important;
         }
 
         /* Chat message styling */
         .stChatMessage {
-            background-color: #1A1F27;
-            border-radius: 6px;
-            padding: 1rem;
-            margin: 0.5rem 0;
+            background-color: #1A1F27 !important;
+            border-radius: 6px !important;
+            padding: 1rem !important;
+            margin: 0.5rem 0 !important;
         }
 
-        /* Info/alert box styling */
-        .stAlert {
-            background-color: #1E2530;
-            border-radius: 6px;
-            padding: 1rem;
-            border: none;
-        }
-
-        /* Transcript styling */
-        .transcript-segment {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 0.6rem;
-            gap: 0.8rem;
-        }
-
-        .timestamp {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.5);
-            min-width: 45px;
-            padding-top: 0.2rem;
-        }
-
-        .text {
-            flex: 1;
-            line-height: 1.4;
-            color: rgb(250, 250, 250);
-        }
-
-        /* Chat input styling */
-        .stChatInput {
-            margin-top: 1rem;
-        }
-
-        .stChatInput input {
-            background-color: #0D1117 !important;
-            border: 1px solid #30363D !important;
-        }
-
-        .stChatInput button {
-            background-color: transparent !important;
-            border: none !important;
-        }
-
-        .stChatInput button:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-        }
-
-        /* Button styling */
-        .stButton button {
-            background-color: #1E2530;
-            color: white;
-            border: 1px solid #30363D;
-            border-radius: 6px;
-            padding: 0.5rem 1rem;
-        }
-
-        .stButton button:hover {
-            border-color: rgb(255, 255, 255, 0.2);
+        /* Typography */
+        h1, h2, h3 {
+            color: rgb(250, 250, 250) !important;
+            font-weight: 500 !important;
         }
         </style>
     """, unsafe_allow_html=True)
