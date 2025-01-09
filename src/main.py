@@ -496,79 +496,9 @@ class EnhancedAudioRAG:
 def set_custom_style():
     st.markdown("""
         <style>
-        /* Column separator styling */
-        div[data-testid="column"]:nth-of-type(1) {
-            position: relative !important;
-            padding-right: 3rem !important;
-            border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-
-        div[data-testid="column"]:nth-of-type(2) {
-            padding-left: 3rem !important;
-            margin-left: 1rem !important;
-        }
-
-        /* Ensure the columns have proper spacing */
-        div[data-testid="stHorizontalBlock"] {
-            gap: 2rem !important;
-        }
         /* Overall app styling */
         .stApp {
-            background-color: #161B22;
-        }
-
-        /* Sidebar styling */
-        [data-testid="stSidebar"] {
-            background-color: #1B2028;
-            padding: 2rem 1rem;
-        }
-
-        [data-testid="stSidebar"] .block-container {
-            padding: 0 !important;
-        }
-
-        /* Title styling */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            font-weight: 500;
-            color: rgb(250, 250, 250);
-        }
-
-        /* Main title */
-        [data-testid="stSidebar"] h1 {
-            font-size: 1.5rem !important;
-            margin-bottom: 2rem;
-        }
-
-        /* Section headers */
-        [data-testid="stSidebar"] h3 {
-            font-size: 0.875rem !important;
-            color: rgb(200, 200, 200);
-            margin: 1.5rem 0 0.5rem 0;
-        }
-
-        /* API Key input styling */
-        .stTextInput input {
-            background-color: #0D1117 !important;
-            border: 1px solid #30363D !important;
-            border-radius: 6px;
-            color: white;
-            padding: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        /* File uploader styling */
-        [data-testid="stFileUploader"] {
-            background-color: #0D1117;
-            border: 1px dashed #30363D;
-            border-radius: 6px;
-            padding: 1.5rem;
-        }
-
-        .uploadedFile {
-            background-color: #0D1117;
-            border-radius: 6px;
-            padding: 0.75rem;
+            background-color: #0E1117 !important;
         }
 
         /* Main content area styling */
@@ -577,101 +507,107 @@ def set_custom_style():
             max-width: none !important;
         }
 
-        /* Tab styling */
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 0.25rem;
-            padding: 0.5rem;
-            background-color: transparent;
+        /* Column styling with correct spacing and separator */
+        div[data-testid="column"]:nth-of-type(1) {
+            border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+            padding-right: 2rem !important;
         }
 
-        .stTabs [data-baseweb="tab"] {
-            height: 2rem;
-            padding: 0 1rem;
-            color: rgb(148, 148, 148);
-            background-color: transparent;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-            font-weight: 400;
+        div[data-testid="column"]:nth-of-type(2) {
+            padding-left: 2rem !important;
         }
 
-        .stTabs [data-baseweb="tab"]:hover {
-            color: rgb(250, 250, 250);
-            background-color: rgba(255, 255, 255, 0.1);
+        /* Sidebar styling */
+        [data-testid="stSidebar"] {
+            background-color: #1B2028 !important;
+            padding: 2rem 1rem !important;
         }
 
-        .stTabs [aria-selected="true"] {
+        [data-testid="stSidebar"] .block-container {
+            padding: 0 !important;
+        }
+
+        /* Title styling */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif !important;
+            font-weight: 500 !important;
             color: rgb(250, 250, 250) !important;
-            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Left column tab styling */
+        div[data-testid="column"]:nth-of-type(1) .stTabs [data-baseweb="tab-list"] {
+            gap: 1rem !important;
+            background-color: transparent !important;
+        }
+
+        div[data-testid="column"]:nth-of-type(1) .stTabs [data-baseweb="tab"] {
+            padding: 0 !important;
+            color: rgb(148, 148, 148) !important;
+            font-size: 0.875rem !important;
+            background: none !important;
             border: none !important;
+        }
+
+        div[data-testid="column"]:nth-of-type(1) .stTabs [aria-selected="true"] {
+            color: rgb(250, 250, 250) !important;
+            border-bottom: 2px solid rgb(250, 250, 250) !important;
+        }
+
+        /* Right column tab styling */
+        div[data-testid="column"]:nth-of-type(2) .stTabs [data-baseweb="tab-list"] {
+            background-color: rgba(30, 30, 30, 0.8) !important;
+            padding: 0.3rem !important;
+            border-radius: 2rem !important;
+            gap: 0.5rem !important;
+        }
+
+        div[data-testid="column"]:nth-of-type(2) .stTabs [data-baseweb="tab"] {
+            padding: 0.3rem 1rem !important;
+            color: rgb(148, 148, 148) !important;
+            font-size: 0.875rem !important;
+            background: transparent !important;
+            border: none !important;
+            border-radius: 1rem !important;
+        }
+
+        div[data-testid="column"]:nth-of-type(2) .stTabs [aria-selected="true"] {
+            color: rgb(250, 250, 250) !important;
+            background-color: rgba(50, 50, 50, 0.8) !important;
+        }
+
+        /* Info box styling */
+        .stAlert {
+            background-color: rgb(17, 24, 39) !important;
+            border: none !important;
+            padding: 1rem !important;
+            border-radius: 0.5rem !important;
         }
 
         /* Remove tab highlight */
         .stTabs [data-baseweb="tab-highlight"] {
-            display: none;
+            display: none !important;
         }
 
-        /* Content cards */
-        .stAlert {
-            background-color: #0D1117;
-            border: 1px solid #30363D;
-            border-radius: 6px;
-            padding: 1rem;
+        /* Input styling */
+        .stTextInput input {
+            background-color: #0D1117 !important;
+            border: 1px solid #30363D !important;
+            border-radius: 6px !important;
+            color: white !important;
+            padding: 0.5rem !important;
+        }
+
+        /* Upload box styling */
+        [data-testid="stFileUploader"] {
+            background-color: rgb(17, 24, 39) !important;
+            border: 1px dashed rgb(55, 65, 81) !important;
+            border-radius: 0.5rem !important;
+            padding: 1rem !important;
         }
 
         /* Slider styling */
-        [data-testid="stSlider"] {
-            padding: 1rem 0;
-        }
-
-        .stSlider [data-baseweb="slider"] {
-            margin-top: 1rem;
-        }
-
-        /* Transcript styling */
-        .transcript-segment {
-            padding: 0.5rem;
-            border-bottom: none;
-        }
-
-        .timestamp {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .text {
-            color: rgb(250, 250, 250);
-            line-height: 1.5;
-        }
-
-        /* Chat container */
-        .stChatMessage {
-            background-color: #0D1117;
-            border-radius: 6px;
-            padding: 1rem;
-            margin: 0.5rem 0;
-        }
-
-        /* Chat input */
-        .stChatInput {
-            border-color: #30363D !important;
-        }
-
-        .stChatInput input {
-            background-color: #0D1117 !important;
-            border-color: #30363D !important;
-        }
-
-        /* Button styling */
-        .stButton button {
-            background-color: #238636;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 0.5rem 1rem;
-        }
-
-        .stButton button:hover {
-            background-color: #2EA043;
+        [data-testid="stSlider"] input {
+            color: rgb(250, 250, 250) !important;
         }
         </style>
     """, unsafe_allow_html=True)
