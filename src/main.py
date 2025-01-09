@@ -314,7 +314,14 @@ class EnhancedAudioRAG:
             
             Key points:
             -
-            
+            if topic is history then 
+
+            Important dates:
+            -
+            if topic is math or science then 
+            Formulas:
+            -
+       
             Include a confidence score (0-100) at the end of your response as [confidence: X].
             
             Content: {text}""".format(text=full_text)
