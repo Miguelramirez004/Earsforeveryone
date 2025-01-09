@@ -515,8 +515,7 @@ def create_streamlit_ui():
         initial_sidebar_state="expanded"
     )
     
-    # Apply critical styles directly
-       st.markdown("""
+    st.markdown("""
         <style>
         /* Overall app styling */
         .stApp {
@@ -632,7 +631,13 @@ def create_streamlit_ui():
             color: rgb(250, 250, 250) !important;
         }
         </style>
-    """, unsafe_allow_html=True)
+    """, unsafe_allow_html=True) 
+
+
+          
+    
+    # Apply critical styles directly
+
     
     # Initialize session state and continue with rest of UI...
     
