@@ -576,157 +576,166 @@ class EnhancedAudioRAG:
 def set_custom_style():
     st.markdown("""
         <style>
-        /* Title styling */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-weight: 600;
-            color: rgb(250, 250, 250);
-        }
-
-        /* Dark theme styling */
+        /* Overall app styling */
         .stApp {
-            background-color: #0E1117;
+            background-color: #161B22;
         }
 
         /* Sidebar styling */
         [data-testid="stSidebar"] {
-            background-color: #1E1E1E;
+            background-color: #1B2028;
             padding: 2rem 1rem;
         }
 
-        /* Column styling */
-        [data-testid="column"]:first-child {
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding-right: 1rem;
+        [data-testid="stSidebar"] .block-container {
+            padding: 0 !important;
         }
 
-        [data-testid="column"]:last-child {
-            padding-left: 1rem;
-        }
-
-        /* Ensure columns take full height */
-        [data-testid="column"] {
-            height: calc(100vh - 80px);
-            overflow-y: auto;
-        }
-
-        /* Remove default padding */
-        .block-container {
-            padding: 2rem 1rem !important;
-            max-width: none !important;
-        }
-
-        /* Remove red underline from selected tabs */
-        .stTabs [data-baseweb="tab-highlight"] {
-            display: none;
-        }
-
-        /* Tab styling - ONLY for second column */
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
-            gap: 0.5rem;
-            background-color: rgba(30, 30, 30, 0.8);
-            padding: 0.5rem;
-            border-radius: 2rem;
-        }
-
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"] {
-            height: 2.5rem;
-            padding: 0 1.5rem;
-            color: rgb(148, 148, 148);
-            background-color: transparent;
-            border-radius: 1.25rem;
+        /* Title styling */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             font-weight: 500;
-        }
-
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"]:hover {
             color: rgb(250, 250, 250);
         }
 
-        [data-testid="column"]:last-child .stTabs [aria-selected="true"] {
-            color: rgb(250, 250, 250) !important;
-            background-color: rgba(50, 50, 50, 0.8) !important;
-            border: none !important;
+        /* Main title */
+        [data-testid="stSidebar"] h1 {
+            font-size: 1.5rem !important;
+            margin-bottom: 2rem;
         }
 
-        /* Hide default tab border in second column */
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab-border"] {
-            display: none;
+        /* Section headers */
+        [data-testid="stSidebar"] h3 {
+            font-size: 0.875rem !important;
+            color: rgb(200, 200, 200);
+            margin: 1.5rem 0 0.5rem 0;
         }
 
-        /* Keep simple styling for first column tabs */
-        [data-testid="column"]:first-child .stTabs [data-baseweb="tab-list"] {
-            gap: 1rem;
-        }
-
-        [data-testid="column"]:first-child .stTabs [data-baseweb="tab"] {
-            padding: 0 1rem;
-            color: rgb(148, 148, 148);
-        }
-
-        [data-testid="column"]:first-child .stTabs [aria-selected="true"] {
-            color: rgb(250, 250, 250) !important;
-            border-bottom: 2px solid rgb(250, 250, 250) !important;
-        }
-
-        /* Input styling */
+        /* API Key input styling */
         .stTextInput input {
-            background-color: #262730;
+            background-color: #0D1117 !important;
+            border: 1px solid #30363D !important;
+            border-radius: 6px;
             color: white;
-            border: 1px solid #4A4A4A;
+            padding: 0.5rem;
+            font-size: 0.875rem;
         }
 
         /* File uploader styling */
         [data-testid="stFileUploader"] {
-            background-color: #262730;
-            padding: 1rem;
-            border-radius: 0.5rem;
+            background-color: #0D1117;
+            border: 1px dashed #30363D;
+            border-radius: 6px;
+            padding: 1.5rem;
         }
 
-        /* Upload box styling */
         .uploadedFile {
-            background-color: #262730;
-            border-radius: 0.5rem;
+            background-color: #0D1117;
+            border-radius: 6px;
+            padding: 0.75rem;
+        }
+
+        /* Main content area styling */
+        .main .block-container {
+            padding: 2rem 1rem !important;
+            max-width: none !important;
+        }
+
+        /* Tab styling */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 0.25rem;
+            padding: 0.5rem;
+            background-color: transparent;
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            height: 2rem;
+            padding: 0 1rem;
+            color: rgb(148, 148, 148);
+            background-color: transparent;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 400;
+        }
+
+        .stTabs [data-baseweb="tab"]:hover {
+            color: rgb(250, 250, 250);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .stTabs [aria-selected="true"] {
+            color: rgb(250, 250, 250) !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border: none !important;
+        }
+
+        /* Remove tab highlight */
+        .stTabs [data-baseweb="tab-highlight"] {
+            display: none;
+        }
+
+        /* Content cards */
+        .stAlert {
+            background-color: #0D1117;
+            border: 1px solid #30363D;
+            border-radius: 6px;
             padding: 1rem;
-            margin: 0.5rem 0;
+        }
+
+        /* Slider styling */
+        [data-testid="stSlider"] {
+            padding: 1rem 0;
+        }
+
+        .stSlider [data-baseweb="slider"] {
+            margin-top: 1rem;
         }
 
         /* Transcript styling */
         .transcript-segment {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 0.6rem;
-            gap: 0.8rem;
+            padding: 0.5rem;
+            border-bottom: 1px solid #30363D;
         }
 
         .timestamp {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.5);
-            min-width: 45px;
-            padding-top: 0.2rem;
         }
 
         .text {
-            flex: 1;
-            line-height: 1.4;
+            color: rgb(250, 250, 250);
+            line-height: 1.5;
         }
 
-        /* Chat input styling */
-        .stChatInput button {
-            background-color: transparent !important;
-            border: none !important;
+        /* Chat container */
+        .stChatMessage {
+            background-color: #0D1117;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
         }
 
-        .stChatInput button:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
+        /* Chat input */
+        .stChatInput {
+            border-color: #30363D !important;
         }
 
-        .stChatInput button svg {
-            transform: scale(0.8);
-            fill: rgba(255, 255, 255, 0.5) !important;
+        .stChatInput input {
+            background-color: #0D1117 !important;
+            border-color: #30363D !important;
         }
 
-        .stChatInput button:hover svg {
-            fill: rgba(255, 255, 255, 0.8) !important;
+        /* Button styling */
+        .stButton button {
+            background-color: #238636;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+        }
+
+        .stButton button:hover {
+            background-color: #2EA043;
         }
         </style>
     """, unsafe_allow_html=True)
