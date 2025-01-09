@@ -576,114 +576,157 @@ class EnhancedAudioRAG:
 def set_custom_style():
     st.markdown("""
         <style>
-        /* Force the main app background color */
-        .main, .stApp {
-            background-color: #0E1117 !important;
+        /* Title styling */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 600;
+            color: rgb(250, 250, 250);
         }
 
-        /* Main content area - more specific */
-        .main .block-container {
-            padding-top: 1rem !important;
-            max-width: none !important;
-        }
-
-        /* Column styling with forced separation */
-        div[data-testid="column"]:nth-of-type(1) {
-            position: relative !important;
-            padding-right: 2rem !important;
-            border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-            margin-right: 2rem !important;
-        }
-
-        div[data-testid="column"]:nth-of-type(2) {
-            padding-left: 2rem !important;
-        }
-
-        /* Tab styling for first column */
-        div[data-testid="column"]:nth-of-type(1) div[data-testid="stHorizontalBlock"] {
-            gap: 0.5rem !important;
-        }
-
-        div[data-testid="column"]:nth-of-type(1) button[data-baseweb="tab"] {
-            background-color: transparent !important;
-            border: none !important;
-            color: rgb(148, 148, 148) !important;
-            padding: 0.5rem 1rem !important;
-            font-size: 0.875rem !important;
-        }
-
-        div[data-testid="column"]:nth-of-type(1) button[aria-selected="true"] {
-            border-bottom: 2px solid rgb(250, 250, 250) !important;
-            color: rgb(250, 250, 250) !important;
-        }
-
-        /* Tab styling for second column */
-        div[data-testid="column"]:nth-of-type(2) div[role="tablist"] {
-            background-color: rgba(30, 30, 30, 0.8) !important;
-            border-radius: 2rem !important;
-            padding: 0.3rem !important;
-            gap: 0.5rem !important;
-        }
-
-        div[data-testid="column"]:nth-of-type(2) button[data-baseweb="tab"] {
-            border-radius: 1rem !important;
-            background-color: transparent !important;
-            border: none !important;
-            color: rgb(148, 148, 148) !important;
-            padding: 0.5rem 1.5rem !important;
-            font-size: 0.875rem !important;
-        }
-
-        div[data-testid="column"]:nth-of-type(2) button[aria-selected="true"] {
-            background-color: rgba(50, 50, 50, 0.8) !important;
-            color: rgb(250, 250, 250) !important;
-        }
-
-        /* Hide tab highlight */
-        button[data-baseweb="tab"] {
-            border: none !important;
-        }
-
-        div[data-baseweb="tab-highlight"] {
-            display: none !important;
+        /* Dark theme styling */
+        .stApp {
+            background-color: #0E1117;
         }
 
         /* Sidebar styling */
-        section[data-testid="stSidebar"] {
-            background-color: #1B2028 !important;
-            width: 250px !important;
+        [data-testid="stSidebar"] {
+            background-color: #1E1E1E;
+            padding: 2rem 1rem;
         }
 
-        section[data-testid="stSidebar"] .block-container {
+        /* Column styling */
+        [data-testid="column"]:first-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding-right: 1rem;
+        }
+
+        [data-testid="column"]:last-child {
+            padding-left: 1rem;
+        }
+
+        /* Ensure columns take full height */
+        [data-testid="column"] {
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        /* Remove default padding */
+        .block-container {
             padding: 2rem 1rem !important;
+            max-width: none !important;
+        }
+
+        /* Remove red underline from selected tabs */
+        .stTabs [data-baseweb="tab-highlight"] {
+            display: none;
+        }
+
+        /* Tab styling - ONLY for second column */
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
+            gap: 0.5rem;
+            background-color: rgba(30, 30, 30, 0.8);
+            padding: 0.5rem;
+            border-radius: 2rem;
+        }
+
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"] {
+            height: 2.5rem;
+            padding: 0 1.5rem;
+            color: rgb(148, 148, 148);
+            background-color: transparent;
+            border-radius: 1.25rem;
+            font-weight: 500;
+        }
+
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"]:hover {
+            color: rgb(250, 250, 250);
+        }
+
+        [data-testid="column"]:last-child .stTabs [aria-selected="true"] {
+            color: rgb(250, 250, 250) !important;
+            background-color: rgba(50, 50, 50, 0.8) !important;
+            border: none !important;
+        }
+
+        /* Hide default tab border in second column */
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab-border"] {
+            display: none;
+        }
+
+        /* Keep simple styling for first column tabs */
+        [data-testid="column"]:first-child .stTabs [data-baseweb="tab-list"] {
+            gap: 1rem;
+        }
+
+        [data-testid="column"]:first-child .stTabs [data-baseweb="tab"] {
+            padding: 0 1rem;
+            color: rgb(148, 148, 148);
+        }
+
+        [data-testid="column"]:first-child .stTabs [aria-selected="true"] {
+            color: rgb(250, 250, 250) !important;
+            border-bottom: 2px solid rgb(250, 250, 250) !important;
         }
 
         /* Input styling */
         .stTextInput input {
-            background-color: #0D1117 !important;
-            border: 1px solid #30363D !important;
-            border-radius: 6px !important;
-            color: white !important;
-            padding: 0.5rem !important;
+            background-color: #262730;
+            color: white;
+            border: 1px solid #4A4A4A;
         }
 
-        /* Remove default Streamlit elements we don't want */
-        footer {
-            display: none !important;
+        /* File uploader styling */
+        [data-testid="stFileUploader"] {
+            background-color: #262730;
+            padding: 1rem;
+            border-radius: 0.5rem;
         }
 
-        /* Chat message styling */
-        .stChatMessage {
-            background-color: #1A1F27 !important;
-            border-radius: 6px !important;
-            padding: 1rem !important;
-            margin: 0.5rem 0 !important;
+        /* Upload box styling */
+        .uploadedFile {
+            background-color: #262730;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
         }
 
-        /* Typography */
-        h1, h2, h3 {
-            color: rgb(250, 250, 250) !important;
-            font-weight: 500 !important;
+        /* Transcript styling */
+        .transcript-segment {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.6rem;
+            gap: 0.8rem;
+        }
+
+        .timestamp {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            min-width: 45px;
+            padding-top: 0.2rem;
+        }
+
+        .text {
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        /* Chat input styling */
+        .stChatInput button {
+            background-color: transparent !important;
+            border: none !important;
+        }
+
+        .stChatInput button:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .stChatInput button svg {
+            transform: scale(0.8);
+            fill: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .stChatInput button:hover svg {
+            fill: rgba(255, 255, 255, 0.8) !important;
         }
         </style>
     """, unsafe_allow_html=True)
