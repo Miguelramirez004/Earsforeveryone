@@ -500,16 +500,7 @@ def set_custom_style():
         div[data-testid="column"]:nth-of-type(1) {
             position: relative !important;
             padding-right: 3rem !important;
-        }
-
-        div[data-testid="column"]:nth-of-type(1)::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 1px;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
         }
 
         div[data-testid="column"]:nth-of-type(2) {
@@ -521,7 +512,6 @@ def set_custom_style():
         div[data-testid="stHorizontalBlock"] {
             gap: 2rem !important;
         }
-        
         /* Overall app styling */
         .stApp {
             background-color: #161B22;
