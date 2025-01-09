@@ -502,6 +502,16 @@ def set_custom_style():
             padding-right: 3rem !important;
         }
 
+        div[data-testid="column"]:nth-of-type(1)::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 1px;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
         div[data-testid="column"]:nth-of-type(2) {
             padding-left: 3rem !important;
             margin-left: 1rem !important;
