@@ -493,8 +493,30 @@ class EnhancedAudioRAG:
     # Add these methods inside your EnhancedAudioRAG class
 
 
-def set_custom_style():
-    st.markdown("""
+
+
+def format_transcript_line(timestamp, text):
+    return f"""
+        <div class="transcript-line" style="display: flex; align-items: flex-start; padding: 0.5rem 0; gap: 1rem;">
+            <div class="timestamp" style="flex-shrink: 0; min-width: 60px; color: rgba(255, 255, 255, 0.5); font-size: 0.75rem;">
+                {timestamp}
+            </div>
+            <div class="transcript-text" style="flex: 1; color: rgb(250, 250, 250); line-height: 1.5;">
+                {text}
+            </div>
+        </div>
+    """
+
+def create_streamlit_ui():
+    # First, set the page config
+    st.set_page_config(
+        page_title="Content Analysis", 
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+    
+    # Apply critical styles directly
+       st.markdown("""
         <style>
         /* Overall app styling */
         .stApp {
@@ -611,49 +633,9 @@ def set_custom_style():
         }
         </style>
     """, unsafe_allow_html=True)
-
-def format_transcript_line(timestamp, text):
-    return f"""
-        <div class="transcript-line" style="display: flex; align-items: flex-start; padding: 0.5rem 0; gap: 1rem;">
-            <div class="timestamp" style="flex-shrink: 0; min-width: 60px; color: rgba(255, 255, 255, 0.5); font-size: 0.75rem;">
-                {timestamp}
-            </div>
-            <div class="transcript-text" style="flex: 1; color: rgb(250, 250, 250); line-height: 1.5;">
-                {text}
-            </div>
-        </div>
-    """
-
-def create_streamlit_ui():
-    # First, set the page config
-    st.set_page_config(
-        page_title="Content Analysis", 
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
-    
-    # Apply critical styles directly
-    st.markdown("""
-        <style>
-        /* Override column layout */
-        [data-testid="stHorizontalBlock"] > div:first-child {
-            border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-            padding-right: 2rem !important;
-        }
-
-        [data-testid="stHorizontalBlock"] > div:last-child {
-            padding-left: 2rem !important;
-        }
-
-        /* Ensure proper gap between columns */
-        [data-testid="stHorizontalBlock"] {
-            gap: 2rem !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
     
     # Initialize session state and continue with rest of UI...
-    set_custom_style()
+    
     init_session_state()
     
 
