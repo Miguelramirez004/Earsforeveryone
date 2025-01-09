@@ -695,13 +695,6 @@ def create_streamlit_ui():
         layout="wide",
         initial_sidebar_state="expanded"
     )
-    def create_streamlit_ui():
-    # First, set the page config
-    st.set_page_config(
-        page_title="Content Analysis", 
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
     
     # Apply critical styles directly
     st.markdown("""
