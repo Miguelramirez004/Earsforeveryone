@@ -632,35 +632,30 @@ def create_streamlit_ui():
         initial_sidebar_state="expanded"
     )
     
-    # Load custom CSS
-    with open('.streamlit/style.css') as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-    
-    # Immediately after page config, set critical styles
+    # Apply critical styles directly
     st.markdown("""
         <style>
-        /* Critical column styling */
-        div[data-testid="column"]:nth-of-type(1) {
-            position: relative !important;
-            padding-right: 2rem !important;
+        /* Override column layout */
+        [data-testid="stHorizontalBlock"] > div:first-child {
             border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+            padding-right: 2rem !important;
         }
 
-        div[data-testid="column"]:nth-of-type(2) {
+        [data-testid="stHorizontalBlock"] > div:last-child {
             padding-left: 2rem !important;
         }
 
-        div[data-testid="stHorizontalBlock"] {
+        /* Ensure proper gap between columns */
+        [data-testid="stHorizontalBlock"] {
             gap: 2rem !important;
         }
         </style>
     """, unsafe_allow_html=True)
     
-    # Then load rest of custom styles
+    # Initialize session state and continue with rest of UI...
     set_custom_style()
-    
-    # Initialize session state
     init_session_state()
+    
 
     # Left sidebar content
     with st.sidebar:
