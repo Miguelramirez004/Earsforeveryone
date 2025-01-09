@@ -496,32 +496,19 @@ class EnhancedAudioRAG:
 def set_custom_style():
     st.markdown("""
         <style>
-        /* Main content area and column container */
-        .main .block-container {
-            padding: 2rem 1rem !important;
-            max-width: none !important;
-        }
-
-        /* Column styling with divider and spacing */
+        /* Column separator styling */
         div[data-testid="column"]:nth-of-type(1) {
-            position: relative !important;
-            padding-right: 3rem !important;
             border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+            padding-right: 2rem !important;
         }
 
         div[data-testid="column"]:nth-of-type(2) {
-            padding-left: 3rem !important;
+            padding-left: 2rem !important;
         }
 
-        /* Fix for column width and spacing */
+        /* Ensure the columns have proper spacing */
         div[data-testid="stHorizontalBlock"] {
-            gap: 3rem !important;
-        }
-
-        /* Ensure columns take full height */
-        div[data-testid="column"] {
-            height: calc(100vh - 80px) !important;
-            overflow-y: auto !important;
+            gap: 0 !important;
         }
         /* Overall app styling */
         .stApp {
