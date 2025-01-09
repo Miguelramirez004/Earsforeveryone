@@ -694,7 +694,7 @@ def set_custom_style():
         /* Transcript styling */
         .transcript-segment {
             padding: 0.5rem;
-            border-bottom: 1px solid #30363D;
+            border-bottom: none;
         }
 
         .timestamp {
