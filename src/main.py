@@ -725,17 +725,22 @@ def create_streamlit_ui():
     with col1:
         tab1, tab2 = st.tabs(["Transcript", "Visual aid"])
         
+
         with tab1:
-            if st.session_state.file_content_processed:
-                for segment in st.session_state.rag_system.transcribed_segments:
-                    st.markdown(f"""
-                        <div class="transcript-segment">
-                            <div class="timestamp">{segment['timestamp']}</div>
-                            <div class="text">{segment['text']}</div>
-                        </div>
-                    """, unsafe_allow_html=True)
-            else:
-                st.info("Upload a file to see transcription")
+    if st.session_state.file_content_processed:
+        for segment in st.session_state.rag_system.transcribed_segments:
+            st.markdown(f"""
+                <div class="transcript-line" style="display: flex; align-items: flex-start; padding: 0.5rem 0; gap: 1rem;">
+                    <div class="timestamp" style="flex-shrink: 0; min-width: 60px; color: rgba(255, 255, 255, 0.5); font-size: 0.75rem;">
+                        {segment['timestamp']}
+                    </div>
+                    <div class="transcript-text" style="flex: 1; color: rgb(250, 250, 250); line-height: 1.5;">
+                        {segment['text']}
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.info("Upload a file to see transcription")
         
         with tab2:
             if uploaded_file and uploaded_file.name.lower().endswith('.mp4'):
