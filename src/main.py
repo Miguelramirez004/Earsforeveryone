@@ -697,6 +697,7 @@ def create_streamlit_ui():
     )
     
     # Apply critical styles directly
+        # Apply critical styles directly
     st.markdown("""
         <style>
         /* Override column layout */
@@ -712,6 +713,51 @@ def create_streamlit_ui():
         /* Ensure proper gap between columns */
         [data-testid="stHorizontalBlock"] {
             gap: 2rem !important;
+        }
+
+        /* Left column tab styling - remove box style */
+        div[data-testid="column"]:first-child [data-baseweb="tab-list"] {
+            gap: 2rem !important;
+            background-color: transparent !important;
+            padding: 0 !important;
+        }
+
+        div[data-testid="column"]:first-child [data-baseweb="tab"] {
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
+            color: rgb(148, 148, 148) !important;
+        }
+
+        div[data-testid="column"]:first-child [data-baseweb="tab"][aria-selected="true"] {
+            color: rgb(250, 250, 250) !important;
+            border-bottom: 2px solid rgb(250, 250, 250) !important;
+        }
+
+        /* Right column tab styling - enhanced rounded corners */
+        div[data-testid="column"]:last-child [data-baseweb="tab-list"] {
+            background-color: rgba(30, 30, 30, 0.8) !important;
+            padding: 0.3rem !important;
+            border-radius: 30px !important;
+            gap: 0.5rem !important;
+        }
+
+        div[data-testid="column"]:last-child [data-baseweb="tab"] {
+            border-radius: 20px !important;
+            padding: 0.5rem 1.5rem !important;
+            color: rgb(148, 148, 148) !important;
+            background: transparent !important;
+            border: none !important;
+        }
+
+        div[data-testid="column"]:last-child [data-baseweb="tab"][aria-selected="true"] {
+            background-color: rgba(50, 50, 50, 0.8) !important;
+            color: rgb(250, 250, 250) !important;
+        }
+
+        /* Remove tab highlight for all tabs */
+        [data-baseweb="tab-highlight"] {
+            display: none !important;
         }
         </style>
     """, unsafe_allow_html=True)
