@@ -578,10 +578,94 @@ def set_custom_style():
         <style>
         /* Overall app styling */
         .stApp {
-            background-color: #161B22;
+            background-color: #0E1117;
         }
 
-        /* Sidebar styling */
+        /* Main content area styling */
+        .main .block-container {
+            padding: 2rem 1rem !important;
+            max-width: none !important;
+        }
+
+        /* Column styling with proper separation */
+        [data-testid="column"]:first-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding-right: 2rem;
+            margin-right: 2rem;
+        }
+
+        [data-testid="column"]:last-child {
+            background-color: #0E1117;
+            padding-left: 2rem;
+        }
+
+        /* Ensure columns take full height */
+        [data-testid="column"] {
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        /* Left column tab styling - clean and minimal */
+        [data-testid="column"]:first-child .stTabs [data-baseweb="tab-list"] {
+            gap: 1rem;
+            background-color: transparent;
+            padding: 0;
+        }
+
+        [data-testid="column"]:first-child .stTabs [data-baseweb="tab"] {
+            color: rgb(148, 148, 148);
+            background-color: transparent;
+            padding: 0;
+            font-size: 0.875rem;
+        }
+
+        [data-testid="column"]:first-child .stTabs [aria-selected="true"] {
+            color: rgb(250, 250, 250) !important;
+            background-color: transparent !important;
+            border-bottom: 2px solid rgb(250, 250, 250) !important;
+        }
+
+        /* Right column tab styling - rounded with background */
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
+            background-color: rgba(30, 30, 30, 0.8);
+            padding: 0.3rem;
+            border-radius: 2rem;
+            gap: 0.5rem;
+        }
+
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"] {
+            height: 2rem;
+            padding: 0 1.5rem;
+            color: rgb(148, 148, 148);
+            background-color: transparent;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            border: none;
+        }
+
+        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"]:hover {
+            color: rgb(250, 250, 250);
+        }
+
+        [data-testid="column"]:last-child .stTabs [aria-selected="true"] {
+            color: rgb(250, 250, 250) !important;
+            background-color: rgba(50, 50, 50, 0.8) !important;
+            border: none !important;
+        }
+
+        /* Remove tab highlights */
+        .stTabs [data-baseweb="tab-highlight"] {
+            display: none;
+        }
+
+        /* Title and header styling */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 500;
+            color: rgb(250, 250, 250);
+        }
+
+        /* Sidebar styling - keeping it unchanged */
         [data-testid="stSidebar"] {
             background-color: #1B2028;
             padding: 2rem 1rem;
@@ -591,91 +675,16 @@ def set_custom_style():
             padding: 0 !important;
         }
 
-        /* Title styling */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            font-weight: 500;
-            color: rgb(250, 250, 250);
-        }
-
-        /* Column styling - increased spacing and divider */
-        [data-testid="column"]:first-child {
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding-right: 2rem !important;  /* Increased padding */
-            margin-right: 2rem;  /* Added margin for more spacing */
-        }
-
-        [data-testid="column"]:last-child {
-            padding-left: 2rem !important;  /* Increased padding */
-        }
-
-        /* Tab styling - ONLY for right column (Content Analysis) */
-        /* Reset default tab styling first */
-        .stTabs [data-baseweb="tab-list"] {
-            background-color: transparent;
-            padding: 0;
-        }
-
-        .stTabs [data-baseweb="tab"] {
-            padding: 0 1rem;
-            color: rgb(148, 148, 148);
-            background-color: transparent;
-            font-size: 0.875rem;
-            font-weight: 400;
-            border-radius: 0;
-        }
-
-        /* Special styling only for right column tabs */
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
-            gap: 0.5rem;
-            background-color: rgba(30, 30, 30, 0.8);
-            padding: 0.5rem;
-            border-radius: 2rem;
-        }
-
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"] {
-            height: 2rem;
-            padding: 0 1.5rem;
-            border-radius: 1rem;
-        }
-
-        [data-testid="column"]:last-child .stTabs [data-baseweb="tab"]:hover {
-            color: rgb(250, 250, 250);
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        [data-testid="column"]:last-child .stTabs [aria-selected="true"] {
-            color: rgb(250, 250, 250) !important;
-            background-color: rgba(50, 50, 50, 0.8) !important;
-            border: none !important;
-        }
-
-        /* Left column tabs - simpler style */
-        [data-testid="column"]:first-child .stTabs [data-baseweb="tab-list"] {
-            gap: 1rem;
-        }
-
-        [data-testid="column"]:first-child .stTabs [aria-selected="true"] {
-            color: rgb(250, 250, 250) !important;
-            border-bottom: 2px solid rgb(250, 250, 250) !important;
-            background-color: transparent !important;
-        }
-
-        /* Remove tab highlight for all tabs */
-        .stTabs [data-baseweb="tab-highlight"] {
-            display: none;
-        }
-
-        /* Rest of the styles remain the same */
+        /* Input styling */
         .stTextInput input {
             background-color: #0D1117 !important;
             border: 1px solid #30363D !important;
             border-radius: 6px;
             color: white;
             padding: 0.5rem;
-            font-size: 0.875rem;
         }
 
+        /* File uploader styling */
         [data-testid="stFileUploader"] {
             background-color: #0D1117;
             border: 1px dashed #30363D;
@@ -683,23 +692,20 @@ def set_custom_style():
             padding: 1.5rem;
         }
 
-        .main .block-container {
-            padding: 2rem 1rem !important;
-            max-width: none !important;
-        }
-
-        /* Content cards */
-        .stAlert {
-            background-color: #0D1117;
-            border: 1px solid #30363D;
+        /* Chat message container styling */
+        .stChatMessage {
+            background-color: #1A1F27;
             border-radius: 6px;
             padding: 1rem;
+            margin: 0.5rem 0;
         }
 
-        /* Ensure columns take full height */
-        [data-testid="column"] {
-            height: calc(100vh - 80px);
-            overflow-y: auto;
+        /* Info/alert box styling */
+        .stAlert {
+            background-color: #1E2530;
+            border-radius: 6px;
+            padding: 1rem;
+            border: none;
         }
         </style>
     """, unsafe_allow_html=True)
