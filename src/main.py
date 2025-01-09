@@ -314,11 +314,10 @@ class EnhancedAudioRAG:
             
             Key points:
             -
-            if topic is history then 
-
+            if topic is history then put 
             Important dates:
             -
-            if topic is math or science then 
+            if topic is math or science then put
             Formulas:
             -
        
@@ -663,9 +662,13 @@ def set_custom_style():
 
 def format_transcript_line(timestamp, text):
     return f"""
-        <div class="transcript-line">
-            <div class="timestamp">{timestamp}</div>
-            <div class="transcript-text">{text}</div>
+        <div class="transcript-line" style="display: flex; align-items: flex-start; padding: 0.5rem 0; gap: 1rem;">
+            <div class="timestamp" style="flex-shrink: 0; min-width: 60px; color: rgba(255, 255, 255, 0.5); font-size: 0.75rem;">
+                {timestamp}
+            </div>
+            <div class="transcript-text" style="flex: 1; color: rgb(250, 250, 250); line-height: 1.5;">
+                {text}
+            </div>
         </div>
     """
 
