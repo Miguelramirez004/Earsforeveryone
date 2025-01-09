@@ -583,6 +583,17 @@ def set_custom_style():
             color: rgb(250, 250, 250);
         }
 
+        /* Dark theme styling */
+        .stApp {
+            background-color: #0E1117;
+        }
+
+        /* Sidebar styling */
+        [data-testid="stSidebar"] {
+            background-color: #1E1E1E;
+            padding: 2rem 1rem;
+        }
+
         /* Column styling */
         [data-testid="column"]:first-child {
             border-right: 1px solid rgba(255, 255, 255, 0.1);
@@ -605,47 +616,12 @@ def set_custom_style():
             max-width: none !important;
         }
 
-        /* Consistent heading sizes */
-        h1 {
-            font-size: 1.8rem !important;
-        }
-
-        h3 {
-            font-size: 1.2rem !important;
-            margin-bottom: 1rem !important;
-        }
-
-        /* Ensure sidebar titles match */
-        .sidebar .block-container {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        /* Transcript styling */
-        .transcript-segment {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 0.6rem;
-            gap: 0.8rem;
-        }
-
-        .timestamp {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.5);
-            min-width: 45px;
-            padding-top: 0.2rem;
-        }
-
-        .text {
-            flex: 1;
-            line-height: 1.4;
-        }
-
         /* Remove red underline from selected tabs */
         .stTabs [data-baseweb="tab-highlight"] {
             display: none;
         }
 
-        /* Custom tab styling - only for second column */
+        /* Tab styling - ONLY for second column */
         [data-testid="column"]:last-child .stTabs [data-baseweb="tab-list"] {
             gap: 0.5rem;
             background-color: rgba(30, 30, 30, 0.8);
@@ -677,7 +653,7 @@ def set_custom_style():
             display: none;
         }
 
-        /* Keep original styling for first column tabs */
+        /* Keep simple styling for first column tabs */
         [data-testid="column"]:first-child .stTabs [data-baseweb="tab-list"] {
             gap: 1rem;
         }
@@ -690,6 +666,48 @@ def set_custom_style():
         [data-testid="column"]:first-child .stTabs [aria-selected="true"] {
             color: rgb(250, 250, 250) !important;
             border-bottom: 2px solid rgb(250, 250, 250) !important;
+        }
+
+        /* Input styling */
+        .stTextInput input {
+            background-color: #262730;
+            color: white;
+            border: 1px solid #4A4A4A;
+        }
+
+        /* File uploader styling */
+        [data-testid="stFileUploader"] {
+            background-color: #262730;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        /* Upload box styling */
+        .uploadedFile {
+            background-color: #262730;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        /* Transcript styling */
+        .transcript-segment {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.6rem;
+            gap: 0.8rem;
+        }
+
+        .timestamp {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            min-width: 45px;
+            padding-top: 0.2rem;
+        }
+
+        .text {
+            flex: 1;
+            line-height: 1.4;
         }
 
         /* Chat input styling */
