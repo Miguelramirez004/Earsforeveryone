@@ -1,7 +1,1 @@
-python3-pip
-python3-dev
-build-essential
-libpoppler-cpp-dev
-pkg-config
-python3-opencv
-ffmpeg 
+ffmpeg
