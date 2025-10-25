@@ -6,8 +6,8 @@ import os
 from collections import defaultdict
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores import FAISS
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.chains import RetrievalQA
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain.chains import create_retrieval_chain
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from pydub import AudioSegment
@@ -176,24 +176,28 @@ class EnhancedAudioRAG:
             return {"answer": "No content available to answer questions.", "confidence": 0}
             
         try:
+            # Create the prompt template
             qa_prompt = ChatPromptTemplate.from_messages([
                 ("system", """You are a helpful AI assistant answering questions about audio content.
                 Base your answers only on the provided context. If you're uncertain, indicate that in your response.
                 Include a confidence score (0-100) at the end of your response in [confidence: X] format.
                 If the context doesn't contain relevant information, say so and give a low confidence score."""),
-                ("human", "{question}"),
+                ("human", "{input}"),
                 ("human", "Context: {context}")
             ])
             
-            qa_chain = RetrievalQA.from_chain_type(
-                llm=self.llm,
-                chain_type="stuff",
-                retriever=self.vector_store.as_retriever(),
-                chain_type_kwargs={"prompt": qa_prompt}
+            # Create the document chain
+            document_chain = create_stuff_documents_chain(self.llm, qa_prompt)
+            
+            # Create the retrieval chain
+            retrieval_chain = create_retrieval_chain(
+                self.vector_store.as_retriever(),
+                document_chain
             )
             
-            response = qa_chain.invoke(question)
-            answer = response['result']
+            # Invoke the chain
+            response = retrieval_chain.invoke({"input": question})
+            answer = response['answer']
             
             confidence_score = 0
             if '[confidence:' in answer:
@@ -216,7 +220,6 @@ class EnhancedAudioRAG:
                 "confidence": 0,
                 "timestamp": datetime.now().strftime("%H:%M:%S")
             }
-    # Continuing the EnhancedAudioRAG class...
 
     def _extract_key_terms(self, text):
         """Identify key academic terms from text with confidence scores"""
@@ -224,25 +227,37 @@ class EnhancedAudioRAG:
             return []
             
         try:
-            response = self.llm.invoke(
-                f"""Identify important academic or technical terms from this text.
-                For each term, provide a confidence score (0-100) indicating how certain you are it's a key term.
-                Return in format: term1 [score], term2 [score], etc.
-                
-                Text: {text}
-                
-                Terms:"""
-            )
+            term_prompt = f"""Identify important academic or technical terms from this text.
+            Return only the terms themselves, one per line.
+            Include a confidence score (0-100) after each term in square brackets.
+            
+            Text: {text}
+            """
+            
+            raw_response = self.llm.invoke(term_prompt)
+            terms_text = str(raw_response)
+            
+            # Remove metadata and formatting
+            if 'content=' in terms_text:
+                terms_text = terms_text.split('content=')[1]
+            if 'additional_kwargs=' in terms_text:
+                terms_text = terms_text.split('additional_kwargs=')[0]
+            
+            terms_text = terms_text.replace("'", "").replace('"', "")
+            terms_text = terms_text.replace("\\n", "\n").strip()
             
             # Parse terms and scores
             terms_with_scores = []
-            parts = str(response).split(',')
-            for part in parts:
-                if '[' in part and ']' in part:
-                    term = part.split('[')[0].strip()
-                    score = float(part.split('[')[1].split(']')[0].strip())
-                    if term and score >= 50:  # Only keep terms with confidence >= 50
-                        terms_with_scores.append({"term": term, "confidence": score})
+            for line in terms_text.split('\n'):
+                line = line.strip()
+                if '[' in line and ']' in line:
+                    term = line.split('[')[0].strip()
+                    try:
+                        score = float(line.split('[')[1].split(']')[0].strip())
+                        if term and score >= 50:  # Only keep terms with confidence >= 50
+                            terms_with_scores.append({"term": term, "confidence": score})
+                    except:
+                        pass
             
             return terms_with_scores
         except Exception as e:
@@ -270,7 +285,7 @@ class EnhancedAudioRAG:
             return {
                 "video_file": video_file,
                 "start_time": timestamp,
-                "confidence": segment.get('confidence', 0) if segment else 0
+                "confidence": 0
             }
                 
         except Exception as e:
@@ -361,46 +376,6 @@ class EnhancedAudioRAG:
             print(f"Error generating summary: {e}")
             return None
 
-    def _extract_key_terms(self, text):
-        """Identify key academic terms from text with confidence scores"""
-        if not text.strip():
-            return []
-            
-        try:
-            term_prompt = f"""Identify important academic or technical terms from this text.
-            Return only the terms themselves, one per line.
-            Include a confidence score (0-100) after each term in square brackets.
-            
-            Text: {text}
-            """
-            
-            raw_response = self.llm.invoke(term_prompt)
-            terms_text = str(raw_response)
-            
-            # Remove metadata and formatting
-            if 'content=' in terms_text:
-                terms_text = terms_text.split('content=')[1]
-            if 'additional_kwargs=' in terms_text:
-                terms_text = terms_text.split('additional_kwargs=')[0]
-            
-            terms_text = terms_text.replace("'", "").replace('"', "")
-            terms_text = terms_text.replace("\\n", "\n").strip()
-            
-            # Parse terms and scores
-            terms_with_scores = []
-            for line in terms_text.split('\n'):
-                line = line.strip()
-                if '[' in line and ']' in line:
-                    term = line.split('[')[0].strip()
-                    score = float(line.split('[')[1].split(']')[0].strip())
-                    if term and score >= 50:  # Only keep terms with confidence >= 50
-                        terms_with_scores.append({"term": term, "confidence": score})
-            
-            return terms_with_scores
-        except Exception as e:
-            print(f"Error extracting key terms: {e}")
-            return []
-
     def generate_term_definition(self, term):
         """Generate definition for a term with confidence score"""
         try:
@@ -489,8 +464,6 @@ class EnhancedAudioRAG:
             return "\n\n".join(glossary_items)
         
         return None
-
-    # Add these methods inside your EnhancedAudioRAG class
 
 def set_custom_style():
     st.markdown("""
